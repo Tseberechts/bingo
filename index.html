@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo Oproepscherm (1-90, Alleen Cijfers)</title>
+  <!-- Laad Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+  <!-- Configureer Tailwind voor aangepaste kleuren/thema --><script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bingo-red': '#e74c3c',
+          'bingo-blue': '#3498db',
+          'bingo-green': '#2ecc71',
+          'bingo-yellow': '#f1c40f',
+          'bingo-orange': '#f39c12',
+          'dark-bg': '#1f2937',
+          'main-bg-active': '#4a4e69', /* Donkerpaars voor hoofdscherm */
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          mono: ['Courier New', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    /* Aangepaste scrollbar voor het geschiedenispaneel */
+    #historyPanel::-webkit-scrollbar {
+      width: 8px;
+    }
+    #historyPanel::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    #historyPanel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    /* Verberg het letter-element */
+    #currentLetter {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body class="bg-dark-bg min-h-screen font-sans text-white p-4 sm:p-6 lg:p-8 flex flex-col">
+
+<!-- Koptekst & Titel --><header class="text-center mb-6">
+  <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-bingo-yellow">
+    BINGO OPROEPER (1-90)
+  </h1>
+  <p class="text-lg text-gray-300 mt-1">Focus op de nummers!</p>
+
+  <!-- Logo toegevoegd --><div class="mt-4">
+
+</div>
+</header>
+
+<!-- Hoofdscherm & Bedieningscontainer (Lay-out is omgedraaid voor desktop) --><main class="flex-grow flex flex-col lg:flex-row gap-6">
+
+  <!-- Linkerpaneel (Desktop): Geschiedenisbord (2/3 breedte op desktop) --><div class="lg:w-2/3 bg-gray-800 p-4 rounded-2xl shadow-2xl flex flex-col order-2 lg:order-1">
+  <h2 class="text-3xl font-bold mb-4 text-center text-bingo-yellow border-b border-gray-600 pb-2">
+    Geschiedenis van Afgeroepen Nummers
+  </h2>
+
+  <!-- Geschiedenisraster (10 kolommen) --><div id="historyPanel" class="flex-grow overflow-y-auto pr-2">
+  <div id="historyGrid" class="grid grid-cols-10 gap-1 text-center">
+    <!-- Nummers worden hier gerenderd --></div>
+</div>
+</div>
+
+  <!-- Rechterpaneel (Desktop): Huidig Nummer & Bediening (1/3 breedte op desktop) --><div class="lg:w-1/3 flex flex-col gap-6 order-1 lg:order-2">
+
+  <!-- Huidig Nummer Weergave --><div id="currentNumberDisplay"
+                                      class="relative bg-main-bg-active p-6 sm:p-8 rounded-2xl shadow-2xl transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] border-4 border-bingo-orange">
+  <!-- Het letter-element is verborgen door CSS --><span id="currentLetter" class="text-7xl sm:text-9xl font-black text-bingo-yellow opacity-70 absolute top-4 left-6 sm:top-8 sm:left-10 leading-none"></span>
+  <span id="currentNumber" class="text-[10rem] sm:text-[14rem] lg:text-[15rem] font-black leading-none -mt-4 text-bingo-yellow drop-shadow-lg font-mono">
+                    --
+                </span>
+  <span id="currentStatus" class="text-xl sm:text-2xl font-bold mt-4 text-white">
+                    Druk op VOLGENDE
+                </span>
+</div>
+
+  <!-- Bedieningsknoppen --><button id="callNextButton"
+                                    class="w-full py-4 bg-bingo-green text-white font-extrabold text-2xl sm:text-3xl rounded-xl shadow-xl transition-all duration-150 ease-in-out hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-bingo-green focus:ring-opacity-50 active:bg-green-700 active:scale-[0.98] disabled:bg-gray-500 disabled:cursor-not-allowed">
+  ROEP VOLGEND NUMMER AF
+</button>
+  <button id="resetButton"
+          class="w-full py-3 bg-gray-700 text-gray-300 font-bold text-lg rounded-xl shadow-md transition-colors duration-150 ease-in-out hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+    SPEL RESETTEN
+  </button>
+</div>
+</main>
+
+<script type="module">
+  // Definieer het maximum aantal nummers voor het spel
+  const MAX_NUMBER = 90;
+  const NUMBERS_PER_COLUMN = MAX_NUMBER / 10; // 9 nummers per kolom
+
+  // Definieer 10 verschillende kleuren voor de 10 kolommen (9 nummers per bereik)
+  const COLUMN_COLORS = [
+    'text-bingo-red',    // 1-9
+    'text-bingo-blue',   // 10-18
+    'text-bingo-green',  // 19-27
+    'text-bingo-yellow', // 28-36
+    'text-bingo-orange', // 37-45
+    'text-pink-500',     // 46-54
+    'text-purple-500',   // 55-63
+    'text-cyan-500',     // 64-72
+    'text-lime-500',     // 73-81
+    'text-amber-500'     // 82-90
+  ];
+
+  // DOM-elementen
+  const currentNumberEl = document.getElementById('currentNumber');
+  const currentStatusEl = document.getElementById('currentStatus');
+  const currentNumberDisplayEl = document.getElementById('currentNumberDisplay');
+  const historyGridEl = document.getElementById('historyGrid');
+  const callNextButton = document.getElementById('callNextButton');
+  const resetButton = document.getElementById('resetButton');
+
+  let allNumbers = [];
+  let calledNumbers = new Set();
+  let uncalledNumbers = [];
+  let lastCalled = null;
+
+  /**
+   * Initialiseert of reset de spelstatus.
+   */
+  const initializeGame = () => {
+    // Maak alle nummers van 1 tot MAX_NUMBER (90)
+    allNumbers = Array.from({ length: MAX_NUMBER }, (_, i) => i + 1);
+    uncalledNumbers = [...allNumbers];
+    calledNumbers.clear();
+    lastCalled = null;
+
+    // Werk de UI bij naar de initiële staat
+    currentNumberEl.textContent = '--';
+    currentStatusEl.textContent = 'Druk op VOLGENDE';
+    // Stel de initiële achtergrond in
+    currentNumberDisplayEl.className = 'relative bg-main-bg-active p-6 sm:p-8 rounded-2xl shadow-2xl transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] border-4 border-bingo-orange';
+    callNextButton.disabled = false;
+    callNextButton.textContent = 'ROEP VOLGEND NUMMER AF';
+
+    renderHistory();
+  };
+
+  /**
+   * Trekt een nieuw willekeurig nummer, werkt de status bij en rendert de weergave.
+   */
+  const callNextNumber = () => {
+    if (uncalledNumbers.length === 0) {
+      currentStatusEl.textContent = 'BINGO! SPEL VOORBIJ!';
+      callNextButton.disabled = true;
+      callNextButton.textContent = 'SPEL VOORBIJ (Alle nummers afgeroepen)';
+      return;
+    }
+
+    // 1. Trek een willekeurig nummer
+    const randomIndex = Math.floor(Math.random() * uncalledNumbers.length);
+    const newNumber = uncalledNumbers[randomIndex];
+
+    // 2. Werk de status bij
+    uncalledNumbers.splice(randomIndex, 1);
+    calledNumbers.add(newNumber);
+    lastCalled = newNumber;
+
+    // 3. Werk de weergave van het huidige nummer bij
+    currentNumberEl.textContent = newNumber;
+    currentStatusEl.textContent = `Het volgende nummer is ${newNumber}!`;
+
+    // Reset en pas nieuwe overgangsklassen toe
+    currentNumberDisplayEl.className = `relative p-6 sm:p-8 rounded-2xl shadow-2xl transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] border-4 border-bingo-orange bg-main-bg-active animate-pulse`;
+
+    // Verwijder de puls na 1 seconde
+    setTimeout(() => {
+      currentNumberDisplayEl.classList.remove('animate-pulse');
+    }, 1000);
+
+    // 4. Render de geschiedenis
+    renderHistory();
+  };
+
+  /**
+   * Rendert het gehele geschiedenisraster (1-90).
+   */
+  const renderHistory = () => {
+    historyGridEl.innerHTML = ''; // Wis het bestaande raster
+
+    // Loop van 1 tot 90
+    for (let i = 1; i <= MAX_NUMBER; i++) {
+      const isCalled = calledNumbers.has(i);
+      const isLastCalled = i === lastCalled;
+
+      // Bepaal de kolomindex (0-9) voor de kleuring van de geschiedenisbal
+      const columnIndex = Math.floor((i - 1) / NUMBERS_PER_COLUMN);
+      const colorClass = COLUMN_COLORS[columnIndex];
+
+      const ballEl = document.createElement('div');
+      ballEl.textContent = i;
+
+      // Basisklassen
+      ballEl.classList.add('p-1', 'rounded', 'font-bold', 'transition-all', 'duration-300', 'text-xs', 'sm:text-sm');
+
+      if (isCalled) {
+        // Afgeroepen bal
+        ballEl.classList.add('bg-white', 'text-gray-800', 'shadow-md');
+        ballEl.classList.add(colorClass);
+
+        if (isLastCalled) {
+          // Laatst Afgeroepen bal - Gemarkeerd
+          ballEl.classList.remove(colorClass); // Haal de kleur weg, anders is de tekst moeilijk te zien op geel
+          ballEl.classList.add('bg-yellow-300', 'ring-4', 'ring-yellow-500', 'text-gray-900', 'scale-110');
+        }
+      } else {
+        // Nog niet afgeroepen bal
+        ballEl.classList.add('bg-gray-700', 'text-gray-500', 'opacity-50');
+      }
+
+      historyGridEl.appendChild(ballEl);
+    }
+
+    // Scroll het geschiedenispaneel naar boven om de nieuwste nummers als eerste te zien
+    const historyPanel = document.getElementById('historyPanel');
+    if (historyPanel.scrollHeight > historyPanel.clientHeight) {
+      historyPanel.scrollTop = 0;
+    }
+  };
+
+  // Event Listeners
+  callNextButton.addEventListener('click', callNextNumber);
+  resetButton.addEventListener('click', initializeGame);
+
+  // Initialiseer het spel bij het laden
+  window.onload = initializeGame;
+
+</script>
+</body>
+</html>
