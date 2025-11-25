@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+    --color-bingo-red: #e74c3c;
+    --color-bingo-blue: #3498db;
+    --color-bingo-green: #2ecc71;
+    --color-bingo-yellow: #f1c40f;
+    --color-bingo-orange: #f39c12;
+    --color-dark-bg: #1f2937;
+    --color-main-bg-active: #4a4e69;
+
+    --font-sans: Inter, sans-serif;
+    --font-mono: "Courier New", monospace;
+}

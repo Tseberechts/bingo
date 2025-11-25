@@ -1,0 +1,138 @@
+.tab-button {
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #9ca3af; /* gray-400 */
+    background-color: transparent;
+    border: none;
+    border-bottom: 4px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    color: white;
+}
+
+.tab-button.active {
+    color: #f59e0b; /* bingo-yellow */
+    border-bottom-color: #f59e0b;
+}
+
+.tab-content {
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.setting-section {
+    background-color: #374151; /* gray-700 */
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.setting-item label {
+    flex-basis: 45%;
+}
+
+.form-input {
+    background-color: #1f2937; /* gray-800 */
+    color: white;
+    border: 2px solid #4b5563; /* gray-600 */
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease-in-out;
+    flex-basis: 50%;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #f59e0b; /* bingo-yellow */
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+}
+
+/* Custom File Input */
+.file-input-container {
+    display: flex;
+    align-items: center;
+    flex-basis: 50%;
+}
+
+.file-input-label {
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+}
+
+.logo-preview {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background-color: white;
+    border-radius: 0.5rem;
+    margin-left: 1rem;
+}
+
+/* Sponsor List Styles */
+.sponsor-item {
+    position: relative; /* For positioning the delete button */
+    display: flex;
+    align-items: center;
+    background-color: #1f2937; /* gray-800 */
+    padding: 1rem;
+    border-radius: 0.75rem;
+    gap: 1rem;
+}
+
+.sponsor-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    background-color: white;
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+}
+
+.sponsor-item .name {
+    flex-grow: 1;
+    font-size: 1.1rem;
+    font-weight: bold;
+    min-width: 0;
+}
+
+.delete-sponsor-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    color: #9ca3af; /* gray-400 */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.delete-sponsor-btn:hover {
+    color: #ef4444; /* red-500 */
+    transform: scale(1.1);
+}
+
+
+/* Override for action buttons */
+.menu-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}

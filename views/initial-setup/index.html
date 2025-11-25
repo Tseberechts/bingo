@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welkom bij Bingo</title>
+    <link rel="stylesheet" href="../../styles/global.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-dark-bg min-h-screen font-sans text-white p-8 flex flex-col items-center justify-center text-center">
+
+    <header class="mb-12">
+        <h1 class="text-6xl font-extrabold tracking-tight text-bingo-yellow">Welkom bij Bingo!</h1>
+        <p class="text-xl text-gray-300 mt-4">Laten we een paar dingen instellen.</p>
+    </header>
+
+    <main class="w-full max-w-lg">
+        <div class="setting-section">
+            <div class="setting-item">
+                <label for="gameTitle" class="text-lg">Titel van het spel:</label>
+                <input type="text" id="gameTitle" class="form-input" value="ROZENSTRAAT BINGO">
+            </div>
+        </div>
+        <button id="getStartedButton" class="menu-button bg-bingo-green px-12 py-4 text-2xl mt-8">Aan de slag</button>
+    </main>
+
+    <script src="index.js"></script>
+</body>
+</html>

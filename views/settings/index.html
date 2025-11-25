@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instellingen - Bingo</title>
+    <link rel="stylesheet" href="../../styles/global.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-dark-bg min-h-screen font-sans text-white p-4 sm:p-6 lg:p-8 flex flex-col">
+
+    <header class="text-center mb-8">
+        <h1 class="text-5xl font-extrabold tracking-tight text-bingo-yellow">Instellingen</h1>
+    </header>
+
+    <main class="flex-grow flex flex-col w-full bg-gray-800 rounded-2xl shadow-2xl p-6">
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-gray-700 mb-6">
+            <button class="tab-button active" data-tab="main">Algemeen</button>
+            <button class="tab-button" data-tab="display">Weergave</button>
+            <button class="tab-button" data-tab="sponsors">Sponsors</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="flex-grow">
+            <!-- Main Settings Tab -->
+            <div id="main" class="tab-content active">
+                <div class="setting-section">
+                    <h2 class="text-2xl font-bold mb-6">Spel</h2>
+                    <div class="setting-item">
+                        <label for="gameTitle" class="text-lg">Titel van het spel:</label>
+                        <input type="text" id="gameTitle" class="form-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Settings Tab -->
+            <div id="display" class="tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- In-Game Display Settings -->
+                    <div class="setting-section">
+                        <h2 class="text-2xl font-bold mb-6">Weergave in Spel</h2>
+                        <div class="setting-item">
+                            <label for="showInGame" class="text-lg">Toon extra weergave:</label>
+                            <input type="checkbox" id="showInGame" class="form-checkbox">
+                        </div>
+                        <div class="setting-item">
+                            <label class="text-lg">Modus:</label>
+                            <select id="inGameDisplayMode" class="form-input">
+                                <option value="sponsors">Sponsors</option>
+                                <option value="logo">Hoofdlogo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Pause Screen Display Settings -->
+                    <div class="setting-section">
+                        <h2 class="text-2xl font-bold mb-6">Weergave op Pauzescherm</h2>
+                        <div class="setting-item">
+                            <label for="showOnPause" class="text-lg">Toon extra weergave:</label>
+                            <input type="checkbox" id="showOnPause" class="form-checkbox">
+                        </div>
+                        <div class="setting-item">
+                            <label class="text-lg">Modus:</label>
+                            <select id="pauseDisplayMode" class="form-input">
+                                <option value="sponsors">Sponsors</option>
+                                <option value="logo">Hoofdlogo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Main Logo Upload -->
+                <div class="setting-section mt-6">
+                    <h2 class="text-2xl font-bold mb-6">Hoofdlogo</h2>
+                     <div class="setting-item">
+                        <label class="text-lg">Huidig logo:</label>
+                        <img id="mainLogoPreview" class="logo-preview hidden h-24" src="" alt="Logo Preview">
+                    </div>
+                    <div class="setting-item">
+                        <label for="mainLogo" class="text-lg">Upload nieuw logo:</label>
+                        <div class="file-input-container">
+                            <input type="file" id="mainLogo" class="hidden" accept="image/*">
+                            <label for="mainLogo" class="file-input-label form-input">Kies bestand...</label>
+                        </div>
+                        <button id="deleteMainLogo" class="menu-button bg-bingo-red !p-2 !text-sm">Verwijder</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sponsors Tab -->
+            <div id="sponsors" class="tab-content hidden">
+                <div class="setting-section">
+                    <h2 class="text-2xl font-bold mb-6">Huidige Sponsors</h2>
+                    <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"></div>
+                    <h2 class="text-2xl font-bold mb-6">Nieuwe Sponsor Toevoegen</h2>
+                    <div class="flex flex-col gap-4">
+                        <div class="setting-item">
+                            <label for="sponsorName" class="text-lg">Naam:</label>
+                            <input type="text" id="sponsorName" class="form-input">
+                        </div>
+                        <div class="setting-item">
+                            <label class="text-lg">Logo:</label>
+                            <div class="file-input-container">
+                                <input type="file" id="sponsorLogo" class="hidden" accept="image/*">
+                                <label for="sponsorLogo" class="file-input-label form-input">Kies bestand...</label>
+                                <img id="sponsorLogoPreview" class="logo-preview hidden" src="" alt="Logo Preview">
+                            </div>
+                        </div>
+                        <button id="addSponsorButton" class="menu-button bg-bingo-blue self-end">Toevoegen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 flex justify-between">
+            <button id="saveButton" class="menu-button bg-bingo-green w-auto px-8">Opslaan</button>
+            <a href="../menu/index.html" class="menu-button bg-gray-700 w-auto px-8">Terug</a>
+        </div>
+    </main>
+
+    <script src="index.js"></script>
+</body>
+</html>
