@@ -10,10 +10,10 @@ const defaultSettings = {
     mainLogoPath: null,
     // In-game display
     showInGame: true,
-    inGameDisplayMode: 'sponsors', // 'sponsors' or 'logo'
+    inGameDisplayMode: 'sponsors', // 'hide, 'sponsors' or 'logo'
     // Pause screen display
     showOnPause: true,
-    pauseDisplayMode: 'sponsors', // 'sponsors' or 'logo'
+    pauseDisplayMode: 'sponsors', // 'hide', 'sponsors' or 'logo'
     sponsors: [],
 };
 

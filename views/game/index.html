@@ -16,7 +16,7 @@
 </header>
 
 <!-- Hoofdscherm & Bedieningscontainer -->
-<main class="flex-grow flex flex-col lg:flex-row gap-6">
+<main class="flex-grow flex flex-col lg:flex-row gap-6 min-h-0">
 
   <!-- Linkerpaneel (Desktop): Geschiedenisbord -->
   <div class="lg:w-2/3 bg-gray-800 p-4 rounded-2xl shadow-2xl flex flex-col order-2 lg:order-1">
@@ -73,9 +73,10 @@
 
 <!-- Pause Overlay -->
 <div id="pauseOverlay" class="fixed inset-0 bg-dark-bg flex-col items-center justify-center hidden z-50 text-center p-8">
-    <h1 class="text-8xl font-extrabold text-bingo-yellow mb-12">PAUZE</h1>
-    <main id="pauseContent" class="w-full max-w-5xl h-96"></main>
-    <button id="resumeButton" class="menu-button bg-bingo-green mt-12 px-12 py-4 text-2xl">Hervatten</button>
+    <h1 class="text-8xl font-extrabold text-bingo-yellow mb-6">PAUZE</h1>
+    <h2 id="pauseDisplayTitle" class="text-3xl font-bold text-bingo-yellow mb-6"></h2>
+    <main id="pauseContent" class="w-full max-w-5xl h-96 relative"></main>
+    <button id="resumeButton" class="menu-button-secondary mt-12">Hervatten</button>
 </div>
 
 <!-- Custom Confirmation Dialog -->

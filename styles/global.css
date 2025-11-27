@@ -25,3 +25,20 @@ html, body {
     transform: translateY(-2px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
 }
+
+.menu-button-secondary {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background-color: transparent;
+    border: 2px solid #4b5563; /* gray-600 */
+    color: #9ca3af; /* gray-400 */
+    border-radius: 0.75rem;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.menu-button-secondary:hover {
+    background-color: #4b5563;
+    color: white;
+}

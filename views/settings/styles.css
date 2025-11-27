@@ -15,8 +15,8 @@
 }
 
 .tab-button.active {
-    color: #f59e0b; /* bingo-yellow */
-    border-bottom-color: #f59e0b;
+    color: var(--color-bingo-orange);
+    border-bottom-color: var(--color-bingo-orange);
 }
 
 .tab-content {
@@ -32,7 +32,7 @@
     background-color: #374151; /* gray-700 */
     padding: 2rem;
     border-radius: 1rem;
-    max-width: 900px;
+    width: 50%;
     margin: 0 auto;
 }
 
@@ -59,7 +59,7 @@
 
 .form-input:focus {
     outline: none;
-    border-color: #f59e0b; /* bingo-yellow */
+    border-color: var(--color-bingo-orange); /* bingo-orange */
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
 }
 
@@ -135,4 +135,15 @@
 .menu-button {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
+}
+
+#toast {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+#toast.show {
+    transform: translateY(0);
+    opacity: 1;
 }

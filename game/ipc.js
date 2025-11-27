@@ -157,6 +157,32 @@ const initializeIpc = () => {
     broadcastUpdate();
   });
 
+  ipcMain.on('toggle-called-number', (event, number) => {
+    if (!activeGameFile) return;
+
+    const indexInCalled = gameState.calledNumbers.indexOf(number);
+    if (indexInCalled > -1) {
+      // Number is currently called, so uncall it
+      gameState.calledNumbers.splice(indexInCalled, 1);
+      gameState.uncalledNumbers.push(number);
+      gameState.uncalledNumbers.sort((a, b) => a - b); // Keep uncalled numbers sorted
+      if (gameState.lastCalled === number) {
+        gameState.lastCalled = null; // If the uncalled number was the last called, clear it
+      }
+    } else {
+      // Number is not called, so call it
+      const indexInUncalled = gameState.uncalledNumbers.indexOf(number);
+      if (indexInUncalled > -1) {
+        gameState.uncalledNumbers.splice(indexInUncalled, 1);
+        gameState.calledNumbers.push(number);
+        gameState.calledNumbers.sort((a, b) => a - b); // Keep called numbers sorted
+        gameState.lastCalled = number; // Set this as the last called number
+      }
+    }
+    saveState(activeGameFile);
+    broadcastUpdate();
+  });
+
   ipcMain.on('request-initial-state', (event) => {
     event.sender.send('game-state-update', gameState);
   });

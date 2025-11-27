@@ -3,14 +3,11 @@ const path = require('path');
 
 // Main settings
 const gameTitleInput = document.getElementById('gameTitle');
-const saveButton = document.getElementById('saveButton');
 const tabs = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
 
 // Display settings
-const showInGameCheckbox = document.getElementById('showInGame');
 const inGameDisplayModeSelect = document.getElementById('inGameDisplayMode');
-const showOnPauseCheckbox = document.getElementById('showOnPause');
 const pauseDisplayModeSelect = document.getElementById('pauseDisplayMode');
 const mainLogoInput = document.getElementById('mainLogo');
 const mainLogoPreview = document.getElementById('mainLogoPreview');
@@ -23,6 +20,43 @@ const sponsorLogoInput = document.getElementById('sponsorLogo');
 const sponsorLogoLabel = document.querySelector('label[for="sponsorLogo"]');
 const sponsorLogoPreview = document.getElementById('sponsorLogoPreview');
 const addSponsorButton = document.getElementById('addSponsorButton');
+
+// Toast element
+const toast = document.getElementById('toast');
+
+// --- Toast Functionality ---
+const showToast = (message = 'Instellingen opgeslagen!') => {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000); // Hide after 3 seconds
+};
+
+// --- Auto-saving Logic ---
+const saveSetting = (key, value) => {
+    ipcRenderer.send('save-settings', { [key]: value });
+    showToast(); // Show toast on successful save
+};
+
+const setupAutoSave = () => {
+    gameTitleInput.addEventListener('change', () => saveSetting('gameTitle', gameTitleInput.value));
+    inGameDisplayModeSelect.addEventListener('change', () => saveSetting('inGameDisplayMode', inGameDisplayModeSelect.value));
+    pauseDisplayModeSelect.addEventListener('change', () => saveSetting('pauseDisplayMode', pauseDisplayModeSelect.value));
+    
+    mainLogoInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const buffer = Buffer.from(e.target.result);
+                await ipcRenderer.invoke('upload-main-logo', { buffer, originalName: file.name });
+                showToast('Hoofdlogo geüpload!'); // Show toast for logo upload
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    });
+};
 
 // --- Tab Navigation ---
 tabs.forEach(tab => {
@@ -72,7 +106,7 @@ const renderSponsors = (sponsors) => {
     });
 };
 
-addSponsorButton.addEventListener('click', () => {
+addSponsorButton.addEventListener('click', async () => {
     const name = sponsorNameInput.value;
     const logoFile = sponsorLogoInput.files[0];
     if (!name || !logoFile) return alert('Vul een naam in en selecteer een logo.');
@@ -87,6 +121,7 @@ addSponsorButton.addEventListener('click', () => {
         sponsorLogoInput.value = '';
         sponsorLogoLabel.textContent = 'Kies bestand...';
         sponsorLogoPreview.classList.add('hidden');
+        showToast('Sponsor toegevoegd!'); // Show toast for sponsor added
     };
     reader.readAsArrayBuffer(logoFile);
 });
@@ -98,6 +133,7 @@ sponsorList.addEventListener('click', async (e) => {
         ipcRenderer.send('delete-sponsor', sponsorId);
         const settings = await ipcRenderer.invoke('get-settings');
         renderSponsors(settings.sponsors);
+        showToast('Sponsor verwijderd!'); // Show toast for sponsor deleted
     }
 });
 
@@ -106,17 +142,16 @@ deleteMainLogoButton.addEventListener('click', () => {
     mainLogoInput.value = '';
     document.querySelector('label[for="mainLogo"]').textContent = 'Kies bestand...';
     mainLogoPreview.classList.add('hidden');
+    showToast('Hoofdlogo verwijderd!'); // Show toast for main logo deleted
 });
 
-// --- Load and Save ---
+// --- Load ---
 window.onload = async () => {
     const settings = await ipcRenderer.invoke('get-settings');
     gameTitleInput.value = settings.gameTitle || 'ROZENSTRAAT BINGO';
     
     // Display settings
-    showInGameCheckbox.checked = settings.showInGame;
     inGameDisplayModeSelect.value = settings.inGameDisplayMode;
-    showOnPauseCheckbox.checked = settings.showOnPause;
     pauseDisplayModeSelect.value = settings.pauseDisplayMode;
 
     if (settings.mainLogoPath) {
@@ -126,31 +161,5 @@ window.onload = async () => {
     }
 
     renderSponsors(settings.sponsors);
+    setupAutoSave();
 };
-
-saveButton.addEventListener('click', async () => {
-    const mainLogoFile = mainLogoInput.files[0];
-    if (mainLogoFile) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const buffer = Buffer.from(e.target.result);
-            await ipcRenderer.invoke('upload-main-logo', { buffer, originalName: mainLogoFile.name });
-            saveAllSettings();
-        };
-        reader.readAsArrayBuffer(mainLogoFile);
-    } else {
-        saveAllSettings();
-    }
-});
-
-function saveAllSettings() {
-    const settings = {
-        gameTitle: gameTitleInput.value,
-        showInGame: showInGameCheckbox.checked,
-        inGameDisplayMode: inGameDisplayModeSelect.value,
-        showOnPause: showOnPauseCheckbox.checked,
-        pauseDisplayMode: pauseDisplayModeSelect.value,
-    };
-    ipcRenderer.send('save-settings', settings);
-    alert('Instellingen opgeslagen!');
-}

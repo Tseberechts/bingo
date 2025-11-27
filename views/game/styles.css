@@ -1,0 +1,86 @@
+/* Sponsor Carousel */
+#sponsorCarousel {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.sponsor-logo {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Removed opacity: 0 here, as wrapper handles it */
+  transition: opacity 1s ease-in-out;
+}
+
+.main-logo {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0; /* Added for initial hidden state */
+  transition: opacity 1s ease-in-out; /* Added for fade-in effect */
+}
+
+.main-logo.fade-in {
+  opacity: 1; /* To make it visible */
+}
+
+/* Adjustments for logos within pauseContent */
+#pauseContent .sponsor-logo,
+#pauseContent .main-logo {
+  max-height: 80%; /* Make logos smaller to leave space for title */
+  max-width: 80%;
+}
+
+.sponsor-display-wrapper {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  position: absolute; /* Moved from JS */
+  inset: 0; /* Moved from JS */
+  display: flex; /* Moved from JS */
+  flex-direction: column; /* Moved from JS */
+  align-items: center; /* Moved from JS */
+  justify-content: center; /* Moved from JS */
+}
+
+.sponsor-display-wrapper.fade-in {
+  opacity: 1;
+}
+
+.sponsor-display-wrapper .sponsor-logo {
+  position: static; /* Override absolute positioning for logos inside wrapper */
+  transform: none;
+  max-height: 60%; /* Adjust size within wrapper */
+  max-width: 60%;
+}
+
+.sponsor-display-wrapper .sponsor-name {
+  color: white;
+  margin-top: 1rem;
+}
+
+
+/* Overlays */
+.overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-box {
+    background-color: #1f2937; /* gray-800 */
+    padding: 2.5rem;
+    border-radius: 1rem; /* rounded-2xl */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+    text-align: center;
+}

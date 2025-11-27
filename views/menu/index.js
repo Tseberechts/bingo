@@ -10,13 +10,13 @@ const closeModalButton = document.getElementById('closeModalButton');
 
 newGameButton.addEventListener('click', () => {
     ipcRenderer.send('start-new-game');
-    window.location.href = '../single/index.html';
+    window.location.href = '../game/index.html';
 });
 
 resumeGameButton.addEventListener('click', async () => {
     const success = await ipcRenderer.invoke('resume-last-game');
     if (success) {
-        window.location.href = '../single/index.html';
+        window.location.href = '../game/index.html';
     } else {
         alert('Geen recent spel gevonden. Start een nieuw spel.');
     }
@@ -35,7 +35,7 @@ loadGameButton.addEventListener('click', async () => {
             button.className = 'menu-button bg-bingo-blue';
             button.onclick = () => {
                 ipcRenderer.send('load-game', file);
-                window.location.href = '../single/index.html';
+                window.location.href = '../game/index.html';
             };
             saveGameList.appendChild(button);
         });
