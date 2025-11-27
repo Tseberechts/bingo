@@ -30,6 +30,7 @@ const confirmYes = document.getElementById('confirmYes');
 const confirmNo = document.getElementById('confirmNo');
 
 let sponsorInterval;
+let pulseTimeout;
 
 // --- Rendering ---
 const renderHistory = (calledNumbers, lastCalled, maxNumber) => {
@@ -61,10 +62,16 @@ const updateUI = (gameState) => {
   gameTitleHeader.textContent = gameTitle || 'BINGO';
   roundCounterEl.textContent = `Ronde: ${round}`;
   currentNumberEl.textContent = lastCalled || '--';
+
+  // Clear any existing pulse animation
+  clearTimeout(pulseTimeout);
+  currentNumberDisplayEl.classList.remove('animate-pulse');
+
   if (lastCalled && !isGameOver) {
-    currentNumberDisplayEl.className = `relative p-6 sm:p-8 rounded-2xl shadow-2xl transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] border-4 border-bingo-orange bg-main-bg-active animate-pulse`;
-    setTimeout(() => currentNumberDisplayEl.classList.remove('animate-pulse'), 3000);
+    currentNumberDisplayEl.classList.add('animate-pulse');
+    pulseTimeout = setTimeout(() => currentNumberDisplayEl.classList.remove('animate-pulse'), 3000);
   }
+  
   callNextButton.disabled = isGameOver;
   callNextButton.textContent = isGameOver ? 'SPEL VOORBIJ' : 'ROEP VOLGEND NUMMER AF';
   renderHistory(calledNumbers, lastCalled, maxNumber);

@@ -8,12 +8,8 @@ let settings = {};
 const defaultSettings = {
     gameTitle: 'ROZENSTRAAT BINGO',
     mainLogoPath: null,
-    // In-game display
-    showInGame: true,
-    inGameDisplayMode: 'sponsors', // 'hide, 'sponsors' or 'logo'
-    // Pause screen display
-    showOnPause: true,
-    pauseDisplayMode: 'sponsors', // 'hide', 'sponsors' or 'logo'
+    inGameDisplayMode: 'hide', // 'hide, 'sponsors' or 'logo'
+    pauseDisplayMode: 'hide', // 'hide', 'sponsors' or 'logo'
     sponsors: [],
 };
 

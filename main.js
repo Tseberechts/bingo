@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, shell } = require('electron');
 const path = require('path');
 const { initializeStorage, deleteAllSaves } = require('./game/storage');
 const { initializeIpc, registerWindow, unregisterWindow } = require('./game/ipc');
@@ -48,6 +48,13 @@ function createMenu() {
                 { role: 'forceReload' },
                 { type: 'separator' },
                 { role: 'toggleDevTools' },
+                { type: 'separator' },
+                {
+                    label: 'Open Data Folder',
+                    click: () => {
+                        shell.openPath(app.getPath('userData'));
+                    }
+                },
                 { type: 'separator' },
                 {
                     label: 'Reset and Delete All Data',

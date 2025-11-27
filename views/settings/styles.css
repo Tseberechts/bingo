@@ -87,6 +87,13 @@
     margin-left: 1rem;
 }
 
+.logo-container {
+    flex-basis: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
 /* Sponsor List Styles */
 .sponsor-item {
     position: relative; /* For positioning the delete button */

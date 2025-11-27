@@ -57,7 +57,7 @@ const initializeIpc = () => {
     return newSponsor;
   });
 
-  ipcMain.on('delete-sponsor', (event, sponsorId) => {
+  ipcMain.handle('delete-sponsor', (event, sponsorId) => {
     const settings = getSettings();
     const sponsorToDelete = settings.sponsors.find(s => s.id === sponsorId);
     if (sponsorToDelete && fs.existsSync(sponsorToDelete.logo)) {
@@ -86,7 +86,7 @@ const initializeIpc = () => {
     return newPath;
   });
 
-  ipcMain.on('delete-main-logo', () => {
+  ipcMain.handle('delete-main-logo', () => {
     const settings = getSettings();
     if (settings.mainLogoPath && fs.existsSync(settings.mainLogoPath)) {
         fs.unlinkSync(settings.mainLogoPath);
@@ -124,6 +124,10 @@ const initializeIpc = () => {
   });
 
   ipcMain.handle('list-save-games', listSaveGames);
+
+  ipcMain.handle('delete-save-game', (event, fileName) => {
+    deleteSaveFile(fileName);
+  });
 
   ipcMain.on('end-game', () => {
     if (activeGameFile) {

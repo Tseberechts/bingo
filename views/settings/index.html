@@ -65,7 +65,10 @@
           <h2 class="text-2xl font-bold mb-6">Hoofdlogo</h2>
           <div class="setting-item">
             <label class="text-lg">Huidig logo:</label>
-            <img id="mainLogoPreview" class="logo-preview hidden h-24" src="" alt="Logo Preview">
+            <div class="logo-container">
+              <img id="mainLogoPreview" class="logo-preview hidden" src="" alt="Logo Preview">
+              <span id="noLogoText" class="text-gray-400">Geen logo ingesteld.</span>
+            </div>
           </div>
           <div class="setting-item">
             <label for="mainLogo" class="text-lg">Upload nieuw logo:</label>
@@ -73,7 +76,9 @@
               <input type="file" id="mainLogo" class="hidden" accept="image/*">
               <label for="mainLogo" class="file-input-label form-input">Kies bestand...</label>
             </div>
-            <button id="deleteMainLogo" class="menu-button bg-bingo-red !p-2 !text-sm">Verwijder</button>
+          </div>
+          <div class="setting-item justify-end">
+            <button id="deleteMainLogo" class="menu-button bg-bingo-red p-2 text-sm">Verwijder Huidig Logo</button>
           </div>
         </div>
       </div>
@@ -110,7 +115,7 @@
 </main>
 
 <!-- Toast Notification -->
-<div id="toast" class="fixed bottom-8 right-8 bg-bingo-green text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">
+<div id="toast" class="fixed bottom-8 right-8 bg-bingo-green text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-300">
   Instellingen opgeslagen!
 </div>
 

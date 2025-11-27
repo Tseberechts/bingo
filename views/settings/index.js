@@ -11,6 +11,7 @@ const inGameDisplayModeSelect = document.getElementById('inGameDisplayMode');
 const pauseDisplayModeSelect = document.getElementById('pauseDisplayMode');
 const mainLogoInput = document.getElementById('mainLogo');
 const mainLogoPreview = document.getElementById('mainLogoPreview');
+const noLogoText = document.getElementById('noLogoText');
 const deleteMainLogoButton = document.getElementById('deleteMainLogo');
 
 // Sponsor tab elements
@@ -33,6 +34,23 @@ const showToast = (message = 'Instellingen opgeslagen!') => {
     }, 3000); // Hide after 3 seconds
 };
 
+// --- UI Update Functions ---
+const updateMainLogoUI = (logoPath) => {
+    if (logoPath) {
+        mainLogoPreview.src = logoPath.replace(/\\/g, '/');
+        mainLogoPreview.classList.remove('hidden');
+        noLogoText.classList.add('hidden');
+        deleteMainLogoButton.classList.remove('hidden');
+        document.querySelector('label[for="mainLogo"]').textContent = path.basename(logoPath);
+    } else {
+        mainLogoPreview.classList.add('hidden');
+        noLogoText.classList.remove('hidden');
+        deleteMainLogoButton.classList.add('hidden');
+        mainLogoInput.value = '';
+        document.querySelector('label[for="mainLogo"]').textContent = 'Kies bestand...';
+    }
+};
+
 // --- Auto-saving Logic ---
 const saveSetting = (key, value) => {
     ipcRenderer.send('save-settings', { [key]: value });
@@ -47,13 +65,10 @@ const setupAutoSave = () => {
     mainLogoInput.addEventListener('change', async (event) => {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const buffer = Buffer.from(e.target.result);
-                await ipcRenderer.invoke('upload-main-logo', { buffer, originalName: file.name });
-                showToast('Hoofdlogo geüpload!'); // Show toast for logo upload
-            };
-            reader.readAsArrayBuffer(file);
+            const buffer = await file.arrayBuffer();
+            const newPath = await ipcRenderer.invoke('upload-main-logo', { buffer: Buffer.from(buffer), originalName: file.name });
+            updateMainLogoUI(newPath);
+            showToast('Hoofdlogo geüpload!');
         }
     });
 };
@@ -74,18 +89,19 @@ const setupFileInput = (input, label, preview) => {
         const file = event.target.files[0];
         if (file) {
             label.textContent = file.name;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                preview.src = e.target.result;
-                preview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
+            if (preview) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
         }
     });
 };
 setupFileInput(sponsorLogoInput, sponsorLogoLabel, sponsorLogoPreview);
-setupFileInput(mainLogoInput, document.querySelector('label[for="mainLogo"]'), mainLogoPreview);
-
+setupFileInput(mainLogoInput, document.querySelector('label[for="mainLogo"]'), null); // Preview is handled by updateMainLogoUI
 
 // --- Sponsor Logic ---
 const renderSponsors = (sponsors) => {
@@ -111,38 +127,35 @@ addSponsorButton.addEventListener('click', async () => {
     const logoFile = sponsorLogoInput.files[0];
     if (!name || !logoFile) return alert('Vul een naam in en selecteer een logo.');
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        const buffer = Buffer.from(e.target.result);
-        await ipcRenderer.invoke('add-sponsor', { name, buffer, originalName: logoFile.name });
-        const settings = await ipcRenderer.invoke('get-settings');
-        renderSponsors(settings.sponsors);
-        sponsorNameInput.value = '';
-        sponsorLogoInput.value = '';
-        sponsorLogoLabel.textContent = 'Kies bestand...';
-        sponsorLogoPreview.classList.add('hidden');
-        showToast('Sponsor toegevoegd!'); // Show toast for sponsor added
-    };
-    reader.readAsArrayBuffer(logoFile);
+    const buffer = await logoFile.arrayBuffer();
+    await ipcRenderer.invoke('add-sponsor', { name, buffer: Buffer.from(buffer), originalName: logoFile.name });
+    
+    const settings = await ipcRenderer.invoke('get-settings');
+    renderSponsors(settings.sponsors);
+    
+    sponsorNameInput.value = '';
+    sponsorLogoInput.value = '';
+    sponsorLogoLabel.textContent = 'Kies bestand...';
+    sponsorLogoPreview.classList.add('hidden');
+    showToast('Sponsor toegevoegd!');
 });
 
 sponsorList.addEventListener('click', async (e) => {
     const deleteButton = e.target.closest('.delete-sponsor-btn');
     if (deleteButton && deleteButton.dataset.id) {
         const sponsorId = parseInt(deleteButton.dataset.id, 10);
-        ipcRenderer.send('delete-sponsor', sponsorId);
+        await ipcRenderer.invoke('delete-sponsor', sponsorId);
+        
         const settings = await ipcRenderer.invoke('get-settings');
         renderSponsors(settings.sponsors);
-        showToast('Sponsor verwijderd!'); // Show toast for sponsor deleted
+        showToast('Sponsor verwijderd!');
     }
 });
 
-deleteMainLogoButton.addEventListener('click', () => {
-    ipcRenderer.send('delete-main-logo');
-    mainLogoInput.value = '';
-    document.querySelector('label[for="mainLogo"]').textContent = 'Kies bestand...';
-    mainLogoPreview.classList.add('hidden');
-    showToast('Hoofdlogo verwijderd!'); // Show toast for main logo deleted
+deleteMainLogoButton.addEventListener('click', async () => {
+    await ipcRenderer.invoke('delete-main-logo');
+    updateMainLogoUI(null);
+    showToast('Hoofdlogo verwijderd!');
 });
 
 // --- Load ---
@@ -154,12 +167,12 @@ window.onload = async () => {
     inGameDisplayModeSelect.value = settings.inGameDisplayMode;
     pauseDisplayModeSelect.value = settings.pauseDisplayMode;
 
-    if (settings.mainLogoPath) {
-        mainLogoPreview.src = settings.mainLogoPath.replace(/\\/g, '/');
-        mainLogoPreview.classList.remove('hidden');
-        document.querySelector('label[for="mainLogo"]').textContent = path.basename(settings.mainLogoPath);
-    }
-
+    updateMainLogoUI(settings.mainLogoPath);
     renderSponsors(settings.sponsors);
     setupAutoSave();
 };
+
+// Listen for settings changes from other processes (e.g., after upload)
+ipcRenderer.on('settings-updated', (event, settings) => {
+    updateMainLogoUI(settings.mainLogoPath);
+});
