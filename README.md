@@ -99,5 +99,3 @@ Board size is fixed at **90** numbers (10 columns) via `game/constants.js` for a
 ## License
 
 Proprietary © [Arkastro BV](https://arkastro.be) (Rozenstraat 5, 2580 Putte, BE1036200718). See [`LICENSE`](LICENSE) and [`EULA.md`](EULA.md).
-
-These legal texts are a starting template — have a Belgian lawyer review them before relying on them commercially. The in-app EULA page shows `EULA.md`. The updater can later point at a paid/generic HTTPS feed without a rewrite.
