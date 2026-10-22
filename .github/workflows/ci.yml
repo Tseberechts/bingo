@@ -9,12 +9,12 @@ on:
 
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: npm
@@ -35,18 +35,20 @@ jobs:
             dist: dist:win
           - os: macos-latest
             dist: dist:mac
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             dist: dist:linux
     runs-on: ${{ matrix.os }}
     # Build only — do not publish here. Immutable GitHub releases cannot be
     # amended by later matrix jobs, so assets are uploaded once in publish-release.
     env:
       EB_PUBLISH: never
+      # Ad-hoc mac signing (identity "-"); do not auto-pick a keychain identity.
+      CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.os == 'macos-latest' && 'false' || 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: npm
@@ -55,6 +57,24 @@ jobs:
         shell: bash
         run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
       - run: npm run ${{ matrix.dist }}
+      - name: Verify macOS ad-hoc code signature
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          APP=$(find release -name 'Bingo.app' -type d | head -n 1)
+          if [ -z "$APP" ]; then
+            echo "Bingo.app not found under release/"
+            find release -maxdepth 3 -type d
+            exit 1
+          fi
+          echo "Verifying $APP"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          codesign -dv --verbose=2 "$APP" 2>&1 | tee /tmp/codesign-info.txt
+          if ! grep -q 'Signature=adhoc' /tmp/codesign-info.txt; then
+            echo "Expected Signature=adhoc on Bingo.app"
+            cat /tmp/codesign-info.txt
+            exit 1
+          fi
       - name: Collect installers and update metadata
         shell: bash
         run: |
@@ -69,7 +89,7 @@ jobs:
             -name '*.yml' \
           \) ! -name 'builder-debug.yml' -exec cp -v {} dist-out/ \;
           ls -la dist-out
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: bingo-${{ matrix.os }}
           path: dist-out/*
@@ -78,11 +98,11 @@ jobs:
   publish-release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           pattern: bingo-*
           path: artifacts

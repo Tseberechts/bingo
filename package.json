@@ -68,7 +68,9 @@
         "dmg",
         "zip"
       ],
-      "category": "public.app-category.entertainment"
+      "category": "public.app-category.entertainment",
+      "identity": "-",
+      "hardenedRuntime": false
     },
     "linux": {
       "target": [

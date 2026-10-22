@@ -57,11 +57,17 @@ Installers are on **GitHub Releases**. A packaged app checks for updates on laun
 
 Auto-update uses the NSIS installer (Windows), zip (macOS), and AppImage (Linux). Portable/`.deb`/`.dmg` remain available as manual downloads.
 
-Builds are **unsigned**:
+Builds are **not notarized** (no paid Apple/Windows certificates yet):
 
 - **Windows**: SmartScreen may warn on first open; choose “More info” → “Run anyway”.
-- **macOS**: Gatekeeper may block unsigned apps; right-click → Open, or `xattr -cr` on the app.
-- Code signing / notarization can be added later for quieter installs.
+- **macOS** (Apple Silicon): builds are **ad-hoc signed** so Gatekeeper shows *“Apple could not verify…”* instead of the unrecoverable *“is damaged”* dialog. First open:
+  1. Click **Done** (or Cancel).
+  2. Open **System Settings → Privacy & Security**.
+  3. Scroll to the blocked-app message and choose **Open Anyway**.
+  - On older macOS: right-click the app → **Open**.
+  - Terminal fallback: `xattr -cr /Applications/Bingo.app` then open the app.
+  - v1.0.0 Mac builds lacked ad-hoc signing; use **v1.0.1+** or the `xattr` command above on an already-installed copy.
+- Developer ID signing / notarization can be added later for quieter first launches.
 
 Local `dist` runs do **not** publish (`EB_PUBLISH` defaults to `never`). CI builds with `EB_PUBLISH=never`, then attaches every platform artifact in a single Release create (compatible with immutable releases).
 
