@@ -1,32 +1,90 @@
 {
   "name": "bingo",
   "version": "1.0.0",
-  "description": "",
+  "description": "Desktop bingo caller for live events (Windows, macOS, Linux)",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"npm run watch:css\" \"electron .\"",
+    "prestart": "npm run build:css",
+    "start": "concurrently -k \"npm run watch:css\" \"electron .\"",
     "build:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css",
-    "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch"
+    "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch",
+    "test": "node --test test/**/*.test.js",
+    "lint": "eslint .",
+    "dist": "npm run build:css && electron-builder --win --mac --linux",
+    "dist:win": "npm run build:css && electron-builder --win",
+    "dist:mac": "npm run build:css && electron-builder --mac",
+    "dist:linux": "npm run build:css && electron-builder --linux"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tseberechts/bingo.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "bingo",
+    "electron"
+  ],
+  "author": "Tseberechts",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
   "bugs": {
     "url": "https://github.com/Tseberechts/bingo/issues"
   },
   "homepage": "https://github.com/Tseberechts/bingo#readme",
-  "devDependencies": {
-    "concurrently": "^9.2.1",
-    "electron": "^39.2.3"
+  "build": {
+    "appId": "com.tseberechts.bingo",
+    "productName": "Bingo",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!release/**",
+      "!test/**",
+      "!.github/**",
+      "!.cache/**",
+      "!sponsors/**",
+      "!eslint.config.js",
+      "!**/*.md",
+      "README.md"
+    ],
+    "extraResources": [],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.entertainment"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Game"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   },
-  "dependencies": {
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@tailwindcss/cli": "^4.1.17",
+    "concurrently": "^9.2.1",
+    "electron": "^39.2.3",
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
     "tailwindcss": "^4.1.17"
   }
 }

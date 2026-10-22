@@ -1,1 +1,67 @@
-# bingo
+# Bingo
+
+Desktop bingo caller for live events (Dutch UI). Runs on **Windows**, **macOS**, and **Linux** via Electron.
+
+Operators use one fullscreen window and **mirror the laptop display** to the projector (OS display mirroring) — there is no separate audience window.
+
+## Requirements
+
+- Node.js 20+
+- npm
+
+## Development
+
+```bash
+npm install
+npm start
+```
+
+`prestart` builds Tailwind CSS into `styles/output.css` (gitignored). `npm start` also watches CSS while Electron runs.
+
+Useful scripts:
+
+| Command | Purpose |
+|---------|---------|
+| `npm start` | Build CSS, watch CSS, run Electron |
+| `npm run build:css` | One-shot CSS build |
+| `npm test` | Unit tests (no Electron required) |
+| `npm run lint` | ESLint |
+| `npm run dist:win` | Windows NSIS + portable |
+| `npm run dist:mac` | macOS DMG + zip |
+| `npm run dist:linux` | Linux AppImage + deb |
+| `npm run dist` | All platform targets (from a capable host) |
+
+## First run
+
+1. Enter a game title on the welcome screen.
+2. Use **Voorkeuren** for logo, sponsor carousel, and in-game / pause display modes.
+3. Start a new game, or resume / load a save.
+
+Settings, logos, sponsors, and savegames live under the Electron **user data** folder (Developer menu → *Open Data Folder* in unpackaged builds).
+
+## Running an event (projector)
+
+1. Connect the projector/TV and set the OS to **duplicate / mirror** the laptop screen.
+2. Start Bingo and press **F11** (or **View → Toggle Full Screen**) so the caller fills the display.
+3. Call numbers as usual — the projector shows the same UI.
+
+## Packaging & SmartScreen
+
+Installers are produced under `release/`. Builds are **unsigned** by default:
+
+- **Windows**: SmartScreen may warn on first open; choose “More info” → “Run anyway” for trusted local/USB installs.
+- **macOS**: Gatekeeper may block unsigned apps; right-click → Open, or `xattr -cr` on the app if you distribute unsigned builds internally.
+- Add code-signing certificates later if you need silent installs.
+
+## Architecture (short)
+
+- `main.js` — Electron main process, secure window prefs + preload
+- `preload.js` — narrow `window.bingo` IPC API (`contextIsolation`)
+- `game/` — settings, saves, IPC, pure game logic
+- `views/` — multi-page UI (menu, game, settings, initial setup)
+
+Board size is fixed at **90** numbers (10 columns) via `game/constants.js` for a future setting.
+
+## License
+
+ISC

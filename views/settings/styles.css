@@ -125,8 +125,13 @@
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    line-height: 1;
     color: #9ca3af; /* gray-400 */
     cursor: pointer;
     transition: all 0.2s ease-in-out;
@@ -153,4 +158,8 @@
 #toast.show {
     transform: translateY(0);
     opacity: 1;
+}
+
+#toast.error {
+    background-color: #e74c3c;
 }

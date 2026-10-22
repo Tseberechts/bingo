@@ -1,3 +1,5 @@
-The font files in this directory were downloaded from Google Fonts.
+# Fonts
 
-To update the fonts, visit https://fonts.google.com/specimen/Inter and download the latest version. Then, replace the files in this directory with the new ones.
+Inter (variable) is used as the UI font. Files come from [Google Fonts](https://fonts.google.com/specimen/Inter).
+
+To update: download the latest Inter variable fonts and replace the files under `Inter/`. Paths are referenced from `styles/fonts.css`.

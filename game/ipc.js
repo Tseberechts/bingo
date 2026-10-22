@@ -3,13 +3,19 @@ const fs = require('fs');
 const path = require('path');
 const { gameState, resetState } = require('./state');
 const { saveState, loadState, deleteSaveFile, listSaveGames, getLastSave } = require('./storage');
-const { getSettings, saveSettings } = require('./settings');
+const { getSettings, getSettingsForRenderer, saveSettings } = require('./settings');
+const { callNextNumber, toggleCalledNumber } = require('./logic');
+const {
+  sanitizeImageFileName,
+  isAllowedImageBuffer,
+  toFileUrl,
+} = require('./paths');
 
 let allWindows = [];
 let activeGameFile = null;
 
 const broadcastUpdate = () => {
-  allWindows.forEach(win => {
+  allWindows.forEach((win) => {
     if (!win.isDestroyed()) {
       win.webContents.send('game-state-update', gameState);
     }
@@ -21,81 +27,142 @@ const registerWindow = (win) => {
 };
 
 const unregisterWindow = (win) => {
-  allWindows = allWindows.filter(w => w !== win);
+  allWindows = allWindows.filter((w) => w !== win);
+};
+
+const bufferFromPayload = (payload) => {
+  if (!payload) return null;
+  if (Buffer.isBuffer(payload)) return payload;
+  if (payload instanceof ArrayBuffer) return Buffer.from(payload);
+  if (ArrayBuffer.isView(payload)) {
+    return Buffer.from(payload.buffer, payload.byteOffset, payload.byteLength);
+  }
+  return null;
 };
 
 const initializeIpc = () => {
-  // App control
   ipcMain.on('exit-app', () => app.quit());
 
-  // Initial setup
-  ipcMain.on('complete-initial-setup', (event, initialSettings) => {
-    saveSettings(initialSettings);
+  ipcMain.handle('toggle-fullscreen', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
-    win.loadFile('views/menu/index.html');
+    if (!win) return false;
+    win.setFullScreen(!win.isFullScreen());
+    return win.isFullScreen();
   });
 
-  // Settings handlers
-  ipcMain.handle('get-settings', getSettings);
-  ipcMain.on('save-settings', (event, settings) => saveSettings(settings));
-
-  // Sponsor/Logo handlers
-  ipcMain.handle('add-sponsor', (event, { name, buffer, originalName }) => {
-    const settings = getSettings();
-    const sponsorsDir = path.join(app.getPath('userData'), 'sponsors');
-    if (!fs.existsSync(sponsorsDir)) fs.mkdirSync(sponsorsDir);
-    
-    const sanitizedName = path.basename(originalName);
-    const newFileName = `${Date.now()}-${sanitizedName}`;
-    const newPath = path.join(sponsorsDir, newFileName);
-    
-    fs.writeFileSync(newPath, buffer);
-
-    const newSponsor = { id: Date.now(), name, logo: newPath };
-    settings.sponsors.push(newSponsor);
-    saveSettings(settings);
-    return newSponsor;
+  ipcMain.on('complete-initial-setup', (event, initialSettings) => {
+    const title = typeof initialSettings?.gameTitle === 'string'
+      ? initialSettings.gameTitle.trim()
+      : '';
+    if (!title) {
+      event.sender.send('setup-error', 'Vul een titel in.');
+      return;
+    }
+    saveSettings({ gameTitle: title });
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) win.loadFile('views/menu/index.html');
   });
 
-  ipcMain.handle('delete-sponsor', (event, sponsorId) => {
+  ipcMain.handle('get-settings', () => getSettingsForRenderer());
+  ipcMain.on('save-settings', (_event, partial) => {
+    if (!partial || typeof partial !== 'object') return;
+    const allowed = {};
+    if (typeof partial.gameTitle === 'string') {
+      allowed.gameTitle = partial.gameTitle.trim() || getSettings().gameTitle;
+    }
+    if (['hide', 'sponsors', 'logo'].includes(partial.inGameDisplayMode)) {
+      allowed.inGameDisplayMode = partial.inGameDisplayMode;
+    }
+    if (['hide', 'sponsors', 'logo'].includes(partial.pauseDisplayMode)) {
+      allowed.pauseDisplayMode = partial.pauseDisplayMode;
+    }
+    if (Object.keys(allowed).length) saveSettings(allowed);
+  });
+
+  ipcMain.handle('add-sponsor', async (_event, { name, buffer, originalName }) => {
+    const trimmedName = typeof name === 'string' ? name.trim() : '';
+    if (!trimmedName) return { ok: false, error: 'Naam is verplicht' };
+
+    const fileBuffer = bufferFromPayload(buffer);
+    const safeImageName = sanitizeImageFileName(originalName);
+    if (!safeImageName || !isAllowedImageBuffer(fileBuffer)) {
+      return { ok: false, error: 'Ongeldig of te groot afbeeldingsbestand (max 5 MB)' };
+    }
+
+    try {
+      const settings = getSettings();
+      const sponsorsDir = path.join(app.getPath('userData'), 'sponsors');
+      if (!fs.existsSync(sponsorsDir)) fs.mkdirSync(sponsorsDir, { recursive: true });
+
+      const newFileName = `${Date.now()}-${safeImageName}`;
+      const newPath = path.join(sponsorsDir, newFileName);
+      fs.writeFileSync(newPath, fileBuffer);
+
+      const newSponsor = { id: Date.now(), name: trimmedName, logo: newPath };
+      settings.sponsors.push(newSponsor);
+      saveSettings(settings);
+      return {
+        ok: true,
+        sponsor: { ...newSponsor, logo: toFileUrl(newPath) },
+      };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('delete-sponsor', (_event, sponsorId) => {
     const settings = getSettings();
-    const sponsorToDelete = settings.sponsors.find(s => s.id === sponsorId);
+    const id = Number(sponsorId);
+    const sponsorToDelete = settings.sponsors.find((s) => s.id === id);
     if (sponsorToDelete && fs.existsSync(sponsorToDelete.logo)) {
       fs.unlinkSync(sponsorToDelete.logo);
     }
-    settings.sponsors = settings.sponsors.filter(s => s.id !== sponsorId);
+    settings.sponsors = settings.sponsors.filter((s) => s.id !== id);
     saveSettings(settings);
+    return { ok: true };
   });
 
-  ipcMain.handle('upload-main-logo', (event, { buffer, originalName }) => {
-    const settings = getSettings();
-    const logosDir = path.join(app.getPath('userData'), 'logos');
-    if (!fs.existsSync(logosDir)) fs.mkdirSync(logosDir);
-
-    if (settings.mainLogoPath && fs.existsSync(settings.mainLogoPath)) {
-        fs.unlinkSync(settings.mainLogoPath);
+  ipcMain.handle('upload-main-logo', async (_event, { buffer, originalName }) => {
+    const fileBuffer = bufferFromPayload(buffer);
+    const safeImageName = sanitizeImageFileName(originalName);
+    if (!safeImageName || !isAllowedImageBuffer(fileBuffer)) {
+      return { ok: false, error: 'Ongeldig of te groot afbeeldingsbestand (max 5 MB)' };
     }
-    
-    const sanitizedName = path.basename(originalName);
-    const newFileName = `main-logo-${Date.now()}-${sanitizedName}`;
-    const newPath = path.join(logosDir, newFileName);
-    
-    fs.writeFileSync(newPath, buffer);
-    settings.mainLogoPath = newPath;
-    saveSettings(settings);
-    return newPath;
+
+    try {
+      const settings = getSettings();
+      const logosDir = path.join(app.getPath('userData'), 'logos');
+      if (!fs.existsSync(logosDir)) fs.mkdirSync(logosDir, { recursive: true });
+
+      if (settings.mainLogoPath && fs.existsSync(settings.mainLogoPath)) {
+        fs.unlinkSync(settings.mainLogoPath);
+      }
+
+      const newFileName = `main-logo-${Date.now()}-${safeImageName}`;
+      const newPath = path.join(logosDir, newFileName);
+      fs.writeFileSync(newPath, fileBuffer);
+      settings.mainLogoPath = newPath;
+      saveSettings(settings);
+      return {
+        ok: true,
+        path: toFileUrl(newPath),
+        fileName: path.basename(newPath),
+      };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
   });
 
   ipcMain.handle('delete-main-logo', () => {
     const settings = getSettings();
     if (settings.mainLogoPath && fs.existsSync(settings.mainLogoPath)) {
-        fs.unlinkSync(settings.mainLogoPath);
+      fs.unlinkSync(settings.mainLogoPath);
     }
     settings.mainLogoPath = null;
     saveSettings(settings);
+    return { ok: true };
   });
 
-  // Game management
   ipcMain.on('start-new-game', () => {
     resetState();
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -104,7 +171,7 @@ const initializeIpc = () => {
     broadcastUpdate();
   });
 
-  ipcMain.on('load-game', (event, fileName) => {
+  ipcMain.on('load-game', (_event, fileName) => {
     if (loadState(fileName)) activeGameFile = fileName;
     else {
       resetState();
@@ -112,22 +179,20 @@ const initializeIpc = () => {
     }
     broadcastUpdate();
   });
-  
+
   ipcMain.handle('resume-last-game', () => {
     const lastSave = getLastSave();
     if (lastSave && loadState(lastSave)) {
-        activeGameFile = lastSave;
-        broadcastUpdate();
-        return true;
+      activeGameFile = lastSave;
+      broadcastUpdate();
+      return { ok: true };
     }
-    return false;
+    return { ok: false, error: 'Geen recent spel gevonden' };
   });
 
-  ipcMain.handle('list-save-games', listSaveGames);
+  ipcMain.handle('list-save-games', () => listSaveGames());
 
-  ipcMain.handle('delete-save-game', (event, fileName) => {
-    deleteSaveFile(fileName);
-  });
+  ipcMain.handle('delete-save-game', (_event, fileName) => deleteSaveFile(fileName));
 
   ipcMain.on('end-game', () => {
     if (activeGameFile) {
@@ -138,17 +203,9 @@ const initializeIpc = () => {
     broadcastUpdate();
   });
 
-  // Core game logic
   ipcMain.on('call-next-number', () => {
     if (!activeGameFile) return;
-    if (gameState.uncalledNumbers.length === 0) gameState.isGameOver = true;
-    else {
-      const randomIndex = Math.floor(Math.random() * gameState.uncalledNumbers.length);
-      const newNumber = gameState.uncalledNumbers[randomIndex];
-      gameState.uncalledNumbers.splice(randomIndex, 1);
-      gameState.calledNumbers.push(newNumber);
-      gameState.lastCalled = newNumber;
-    }
+    callNextNumber(gameState);
     saveState(activeGameFile);
     broadcastUpdate();
   });
@@ -161,28 +218,11 @@ const initializeIpc = () => {
     broadcastUpdate();
   });
 
-  ipcMain.on('toggle-called-number', (event, number) => {
+  ipcMain.on('toggle-called-number', (_event, number) => {
     if (!activeGameFile) return;
-
-    const indexInCalled = gameState.calledNumbers.indexOf(number);
-    if (indexInCalled > -1) {
-      // Number is currently called, so uncall it
-      gameState.calledNumbers.splice(indexInCalled, 1);
-      gameState.uncalledNumbers.push(number);
-      gameState.uncalledNumbers.sort((a, b) => a - b); // Keep uncalled numbers sorted
-      if (gameState.lastCalled === number) {
-        gameState.lastCalled = null; // If the uncalled number was the last called, clear it
-      }
-    } else {
-      // Number is not called, so call it
-      const indexInUncalled = gameState.uncalledNumbers.indexOf(number);
-      if (indexInUncalled > -1) {
-        gameState.uncalledNumbers.splice(indexInUncalled, 1);
-        gameState.calledNumbers.push(number);
-        gameState.calledNumbers.sort((a, b) => a - b); // Keep called numbers sorted
-        gameState.lastCalled = number; // Set this as the last called number
-      }
-    }
+    const n = Number(number);
+    if (!Number.isInteger(n)) return;
+    toggleCalledNumber(gameState, n);
     saveState(activeGameFile);
     broadcastUpdate();
   });

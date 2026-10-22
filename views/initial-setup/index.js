@@ -1,12 +1,18 @@
-const { ipcRenderer } = require('electron');
+const api = window.bingo;
 
 const gameTitleInput = document.getElementById('gameTitle');
 const getStartedButton = document.getElementById('getStartedButton');
 
 getStartedButton.addEventListener('click', () => {
-    const initialSettings = {
-        gameTitle: gameTitleInput.value,
-        // Other settings will use defaults
-    };
-    ipcRenderer.send('complete-initial-setup', initialSettings);
+  const title = gameTitleInput.value.trim();
+  if (!title) {
+    alert('Vul een titel in voor je bingo.');
+    gameTitleInput.focus();
+    return;
+  }
+  api.completeInitialSetup({ gameTitle: title });
+});
+
+gameTitleInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') getStartedButton.click();
 });
