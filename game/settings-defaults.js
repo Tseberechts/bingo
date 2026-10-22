@@ -1,7 +1,7 @@
 const { MAX_NUMBER } = require('./constants');
 
 const defaultSettings = {
-  gameTitle: 'MIJN AWESOME BINGO',
+  gameTitle: 'BINGO',
   mainLogoPath: null,
   inGameDisplayMode: 'hide', // 'hide', 'sponsors', or 'logo'
   pauseDisplayMode: 'hide', // 'hide', 'sponsors', or 'logo'
@@ -9,6 +9,7 @@ const defaultSettings = {
   maxNumber: MAX_NUMBER,
   setupStep: 0,
   setupComplete: false,
+  projectorTipSeen: false,
 };
 
 const mergeSettings = (defaults, saved = {}) => ({

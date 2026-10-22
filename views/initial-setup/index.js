@@ -41,8 +41,10 @@ const nextButton = document.getElementById('nextButton');
 const laterButton = document.getElementById('laterButton');
 
 let currentStep = 0;
+const DEFAULT_TITLE = 'BINGO';
+
 let settings = {
-  gameTitle: 'MIJN AWESOME BINGO',
+  gameTitle: DEFAULT_TITLE,
   mainLogoPath: null,
   mainLogoFileName: null,
   inGameDisplayMode: 'hide',
@@ -71,12 +73,33 @@ const clearErrors = () => {
 };
 
 const hasSavedProgress = () => {
-  const titleChanged = settings.gameTitle && settings.gameTitle !== 'MIJN AWESOME BINGO';
+  const titleChanged = settings.gameTitle && settings.gameTitle !== DEFAULT_TITLE;
   const hasLogo = Boolean(settings.mainLogoPath);
   const hasSponsors = Array.isArray(settings.sponsors) && settings.sponsors.length > 0;
   const displayChanged = settings.inGameDisplayMode !== 'hide' || settings.pauseDisplayMode !== 'hide';
   const stepped = Number(settings.setupStep) > 0 || currentStep > 0;
   return titleChanged || hasLogo || hasSponsors || displayChanged || stepped;
+};
+
+const displayWarning = document.getElementById('displayWarning');
+
+const updateDisplayWarning = () => {
+  if (!displayWarning) return;
+  const warnings = [];
+  const modes = [inGameDisplayModeSelect.value, pauseDisplayModeSelect.value];
+  if (modes.includes('logo') && !settings.mainLogoPath) {
+    warnings.push('Je koos Hoofdlogo, maar er is nog geen logo geüpload.');
+  }
+  if (modes.includes('sponsors') && !(settings.sponsors || []).length) {
+    warnings.push('Je koos Sponsors, maar er zijn nog geen sponsors toegevoegd.');
+  }
+  if (!warnings.length) {
+    displayWarning.classList.add('hidden');
+    displayWarning.textContent = '';
+    return;
+  }
+  displayWarning.textContent = warnings.join(' ');
+  displayWarning.classList.remove('hidden');
 };
 
 const updateMainLogoUI = (logoPath, fileName) => {
@@ -186,11 +209,12 @@ const showStep = (step) => {
 
 const applySettingsToForm = (nextSettings) => {
   settings = { ...settings, ...nextSettings };
-  gameTitleInput.value = settings.gameTitle || 'MIJN AWESOME BINGO';
+  gameTitleInput.value = settings.gameTitle || DEFAULT_TITLE;
   inGameDisplayModeSelect.value = settings.inGameDisplayMode || 'hide';
   pauseDisplayModeSelect.value = settings.pauseDisplayMode || 'hide';
   updateMainLogoUI(settings.mainLogoPath, settings.mainLogoFileName);
   renderSponsors(settings.sponsors || []);
+  updateDisplayWarning();
 };
 
 const saveTitleProgress = async (setupStep) => {
@@ -269,7 +293,7 @@ laterButton.addEventListener('click', async () => {
 
   if (currentStep === 0) {
     const title = gameTitleInput.value.trim();
-    payload.gameTitle = title || 'MIJN AWESOME BINGO';
+    payload.gameTitle = title || DEFAULT_TITLE;
   }
   if (currentStep === 2) {
     payload.inGameDisplayMode = inGameDisplayModeSelect.value;
@@ -376,6 +400,9 @@ sponsorList.addEventListener('click', async (event) => {
   applySettingsToForm(refreshed);
   await api.saveSetupProgress({ setupStep: currentStep });
 });
+
+inGameDisplayModeSelect.addEventListener('change', updateDisplayWarning);
+pauseDisplayModeSelect.addEventListener('change', updateDisplayWarning);
 
 window.onload = async () => {
   const loaded = await api.getSettings();

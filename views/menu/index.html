@@ -3,21 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; script-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; script-src 'self'">
     <title>Bingo Menu</title>
     <link rel="stylesheet" href="../../styles/global.css">
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="bg-dark-bg min-h-screen font-sans text-white p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
 
-    <header class="text-center mb-12">
+    <header class="text-center mb-8">
         <h1 class="text-6xl font-extrabold tracking-tight text-bingo-yellow">BINGO</h1>
+        <p class="text-gray-400 mt-4 max-w-md mx-auto">
+            Spiegel je laptop naar de beamer, daarna Volledig scherm.
+        </p>
     </header>
+
+    <div id="setupBanner" class="w-full max-w-md mb-6 hidden">
+        <div class="setup-banner">
+            <p class="text-sm text-amber-100 mb-3">Je setup is nog niet afgerond.</p>
+            <a href="../initial-setup/index.html" id="finishSetupButton" class="menu-button bg-bingo-orange text-base py-3">Setup afronden</a>
+        </div>
+    </div>
+
+    <div id="projectorTip" class="w-full max-w-md mb-6 hidden">
+        <div class="projector-tip">
+            <p class="text-sm text-gray-200 mb-3">
+                Tip: spiegelmodus + <strong>Volledig scherm</strong> zodat iedereen het bord ziet.
+            </p>
+            <button type="button" id="dismissProjectorTip" class="menu-button-secondary text-sm">Begrepen</button>
+        </div>
+    </div>
 
     <main class="flex flex-col gap-6 w-full max-w-md">
         <button id="newGameButton" class="menu-button bg-bingo-green">Nieuw Spel</button>
         <button id="resumeGameButton" class="menu-button bg-bingo-blue">Laatste Spel Hervatten</button>
         <button id="loadGameButton" class="menu-button bg-gray-700">Spel Laden</button>
+        <button id="fullscreenButton" class="menu-button bg-gray-700" type="button" aria-pressed="false">Volledig scherm</button>
         <a href="../settings/index.html" id="preferencesButton" class="menu-button bg-gray-700">Voorkeuren</a>
         <button id="exitButton" class="menu-button bg-bingo-red mt-4">Afsluiten</button>
         <p id="appVersionLabel" class="text-center text-sm text-gray-500 mt-2" aria-live="polite"></p>

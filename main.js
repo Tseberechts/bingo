@@ -40,38 +40,38 @@ function createMenu() {
   const isDev = !app.isPackaged;
   const menuTemplate = [
     {
-      label: 'File',
+      label: 'Bestand',
       submenu: [
-        { label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: () => app.quit() },
+        { label: 'Afsluiten', accelerator: 'CmdOrCtrl+Q', click: () => app.quit() },
       ],
     },
     {
-      label: 'View',
+      label: 'Beeld',
       submenu: [
-        { role: 'togglefullscreen' },
+        { role: 'togglefullscreen', label: 'Volledig scherm' },
         { type: 'separator' },
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { role: 'toggleDevTools', visible: isDev },
+        { role: 'reload', label: 'Vernieuwen' },
+        { role: 'forceReload', label: 'Hard vernieuwen' },
+        { role: 'toggleDevTools', label: 'Ontwikkelaarshulpmiddelen', visible: isDev },
       ],
     },
   ];
 
   if (isDev) {
     menuTemplate.push({
-      label: 'Developer',
+      label: 'Ontwikkelaar',
       submenu: [
-        { role: 'toggleDevTools' },
+        { role: 'toggleDevTools', label: 'Ontwikkelaarshulpmiddelen' },
         { type: 'separator' },
         {
-          label: 'Open Data Folder',
+          label: 'Gegevensmap openen',
           click: () => {
             shell.openPath(app.getPath('userData'));
           },
         },
         { type: 'separator' },
         {
-          label: 'Reset and Delete All Data',
+          label: 'Alles resetten en verwijderen',
           click: async () => {
             const { response } = await dialog.showMessageBox(mainWindow || undefined, {
               type: 'warning',

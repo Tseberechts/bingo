@@ -1,7 +1,86 @@
+/* Override global overflow:hidden so the menu can scroll on short screens */
+body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    justify-content: safe center;
+}
+
+.setup-banner,
+.projector-tip {
+    background-color: #374151;
+    border: 1px solid #4b5563;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+}
+
+@media (max-height: 800px) {
+    body {
+        padding: 0.75rem 1rem;
+    }
+
+    header {
+        margin-bottom: 1rem;
+    }
+
+    header p {
+        margin-top: 0.5rem;
+    }
+
+    #setupBanner,
+    #projectorTip {
+        margin-bottom: 0.75rem;
+    }
+
+    .setup-banner,
+    .projector-tip {
+        padding: 0.75rem 1rem;
+    }
+
+    .setup-banner p,
+    .projector-tip p {
+        margin-bottom: 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    main {
+        gap: 0.75rem;
+    }
+
+    .menu-button {
+        padding: 0.75rem 1.25rem;
+        font-size: 1.25rem;
+    }
+}
+
+.setup-banner {
+    border-color: #f39c12;
+    background-color: rgba(243, 156, 18, 0.15);
+}
+
 .save-game-item {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+.save-game-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.save-game-meta {
+    display: block;
+    font-size: 0.85rem;
+    color: #d1d5db;
+    margin-top: 0.25rem;
+    font-weight: normal;
+}
+
+.fullscreen-active {
+    background-color: #2ecc71 !important; /* bingo-green */
+    color: #1f2937 !important;
 }
 
 .delete-save-button {

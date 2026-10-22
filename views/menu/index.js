@@ -3,10 +3,14 @@ const api = window.bingo;
 const newGameButton = document.getElementById('newGameButton');
 const resumeGameButton = document.getElementById('resumeGameButton');
 const loadGameButton = document.getElementById('loadGameButton');
+const fullscreenButton = document.getElementById('fullscreenButton');
 const exitButton = document.getElementById('exitButton');
 const loadGameModal = document.getElementById('loadGameModal');
 const saveGameList = document.getElementById('saveGameList');
 const closeModalButton = document.getElementById('closeModalButton');
+const setupBanner = document.getElementById('setupBanner');
+const projectorTip = document.getElementById('projectorTip');
+const dismissProjectorTip = document.getElementById('dismissProjectorTip');
 
 newGameButton.addEventListener('click', () => {
   api.startNewGame();
@@ -22,11 +26,25 @@ resumeGameButton.addEventListener('click', async () => {
   }
 });
 
+const updateFullscreenButton = (isOn) => {
+  const on = Boolean(isOn);
+  fullscreenButton.setAttribute('aria-pressed', on ? 'true' : 'false');
+  fullscreenButton.classList.toggle('fullscreen-active', on);
+  fullscreenButton.classList.toggle('bg-gray-700', !on);
+  fullscreenButton.classList.toggle('bg-bingo-green', on);
+  fullscreenButton.textContent = on ? 'Volledig scherm uit' : 'Volledig scherm';
+};
+
+fullscreenButton.addEventListener('click', async () => {
+  const isOn = await api.toggleFullscreen();
+  updateFullscreenButton(isOn);
+});
+
 const populateSaveGames = async () => {
-  const saveFiles = await api.listSaveGames();
+  const saveGames = await api.listSaveGames();
   saveGameList.replaceChildren();
 
-  if (!saveFiles.length) {
+  if (!saveGames.length) {
     const empty = document.createElement('p');
     empty.className = 'text-gray-400';
     empty.textContent = 'Geen opgeslagen spellen gevonden.';
@@ -34,15 +52,30 @@ const populateSaveGames = async () => {
     return;
   }
 
-  saveFiles.forEach((file) => {
+  saveGames.forEach((save) => {
+    const fileName = typeof save === 'string' ? save : save.fileName;
+    const label = typeof save === 'string'
+      ? fileName.replace('.json', '').replace(/game-/g, '')
+      : save.label;
+    const meta = typeof save === 'object' && save.meta ? save.meta : '';
+
     const container = document.createElement('div');
     container.className = 'save-game-item';
 
     const loadButton = document.createElement('button');
-    loadButton.textContent = file.replace('.json', '').replace(/game-/g, '');
-    loadButton.className = 'menu-button bg-bingo-blue flex-grow';
+    loadButton.className = 'menu-button bg-bingo-blue flex-grow text-left';
+    const labelEl = document.createElement('span');
+    labelEl.className = 'save-game-label';
+    labelEl.textContent = label;
+    loadButton.appendChild(labelEl);
+    if (meta) {
+      const metaEl = document.createElement('span');
+      metaEl.className = 'save-game-meta';
+      metaEl.textContent = meta;
+      loadButton.appendChild(metaEl);
+    }
     loadButton.onclick = () => {
-      api.loadGame(file);
+      api.loadGame(fileName);
       window.location.href = '../game/index.html';
     };
 
@@ -52,9 +85,9 @@ const populateSaveGames = async () => {
     deleteButton.className = 'delete-save-button';
     deleteButton.onclick = async (e) => {
       e.stopPropagation();
-      const confirmed = confirm(`Weet je zeker dat je het spel "${file}" wilt verwijderen?`);
+      const confirmed = confirm(`Weet je zeker dat je het spel "${label}" wilt verwijderen?`);
       if (confirmed) {
-        const result = await api.deleteSaveGame(file);
+        const result = await api.deleteSaveGame(fileName);
         if (!result?.ok) {
           alert(result?.error || 'Verwijderen mislukt');
           return;
@@ -84,12 +117,22 @@ exitButton.addEventListener('click', () => {
   api.exitApp();
 });
 
-document.addEventListener('keydown', (event) => {
+dismissProjectorTip.addEventListener('click', () => {
+  projectorTip.classList.add('hidden');
+  api.saveSettings({ projectorTipSeen: true });
+});
+
+document.addEventListener('keydown', async (event) => {
   if (event.key === 'F11') {
     event.preventDefault();
-    api.toggleFullscreen();
+    const isOn = await api.toggleFullscreen();
+    updateFullscreenButton(isOn);
   }
 });
+
+if (api.onFullscreenChanged) {
+  api.onFullscreenChanged((isOn) => updateFullscreenButton(isOn));
+}
 
 const appVersionLabel = document.getElementById('appVersionLabel');
 if (appVersionLabel && api.getAppInfo) {
@@ -99,3 +142,16 @@ if (appVersionLabel && api.getAppInfo) {
     }
   });
 }
+
+window.onload = async () => {
+  const settings = await api.getSettings();
+  if (settings.setupComplete === false) {
+    setupBanner.classList.remove('hidden');
+  }
+  if (!settings.projectorTipSeen) {
+    projectorTip.classList.remove('hidden');
+  }
+  if (api.getFullscreen) {
+    updateFullscreenButton(await api.getFullscreen());
+  }
+};

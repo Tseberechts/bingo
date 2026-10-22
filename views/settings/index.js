@@ -20,6 +20,12 @@ const sponsorLogoPreview = document.getElementById('sponsorLogoPreview');
 const addSponsorButton = document.getElementById('addSponsorButton');
 
 const toast = document.getElementById('toast');
+const displayWarning = document.getElementById('displayWarning');
+
+let currentSettings = {
+  mainLogoPath: null,
+  sponsors: [],
+};
 
 const showToast = (message = 'Instellingen opgeslagen!', isError = false) => {
   toast.textContent = message;
@@ -28,6 +34,25 @@ const showToast = (message = 'Instellingen opgeslagen!', isError = false) => {
   setTimeout(() => {
     toast.classList.remove('show');
   }, 3000);
+};
+
+const updateDisplayWarning = () => {
+  if (!displayWarning) return;
+  const warnings = [];
+  const modes = [inGameDisplayModeSelect.value, pauseDisplayModeSelect.value];
+  if (modes.includes('logo') && !currentSettings.mainLogoPath) {
+    warnings.push('Je koos Hoofdlogo, maar er is nog geen logo geüpload.');
+  }
+  if (modes.includes('sponsors') && !(currentSettings.sponsors || []).length) {
+    warnings.push('Je koos Sponsors, maar er zijn nog geen sponsors toegevoegd.');
+  }
+  if (!warnings.length) {
+    displayWarning.classList.add('hidden');
+    displayWarning.textContent = '';
+    return;
+  }
+  displayWarning.textContent = warnings.join(' ');
+  displayWarning.classList.remove('hidden');
 };
 
 const updateMainLogoUI = (logoPath, fileName) => {
@@ -62,9 +87,11 @@ const setupAutoSave = () => {
   });
   inGameDisplayModeSelect.addEventListener('change', () => {
     saveSetting('inGameDisplayMode', inGameDisplayModeSelect.value);
+    updateDisplayWarning();
   });
   pauseDisplayModeSelect.addEventListener('change', () => {
     saveSetting('pauseDisplayMode', pauseDisplayModeSelect.value);
+    updateDisplayWarning();
   });
 
   mainLogoInput.addEventListener('change', async (event) => {
@@ -76,7 +103,9 @@ const setupAutoSave = () => {
       showToast(result?.error || 'Upload mislukt', true);
       return;
     }
+    currentSettings.mainLogoPath = result.path;
     updateMainLogoUI(result.path, result.fileName);
+    updateDisplayWarning();
     showToast('Hoofdlogo geüpload!');
   });
 };
@@ -160,7 +189,9 @@ addSponsorButton.addEventListener('click', async () => {
   }
 
   const settings = await api.getSettings();
+  currentSettings = settings;
   renderSponsors(settings.sponsors);
+  updateDisplayWarning();
 
   sponsorNameInput.value = '';
   sponsorLogoInput.value = '';
@@ -175,14 +206,18 @@ sponsorList.addEventListener('click', async (e) => {
     const sponsorId = parseInt(deleteButton.dataset.id, 10);
     await api.deleteSponsor(sponsorId);
     const settings = await api.getSettings();
+    currentSettings = settings;
     renderSponsors(settings.sponsors);
+    updateDisplayWarning();
     showToast('Sponsor verwijderd!');
   }
 });
 
 deleteMainLogoButton.addEventListener('click', async () => {
   await api.deleteMainLogo();
+  currentSettings.mainLogoPath = null;
   updateMainLogoUI(null);
+  updateDisplayWarning();
   showToast('Hoofdlogo verwijderd!');
 });
 
@@ -206,11 +241,13 @@ const loadAppInfo = async () => {
 
 window.onload = async () => {
   const settings = await api.getSettings();
-  gameTitleInput.value = settings.gameTitle || 'MIJN AWESOME BINGO';
+  currentSettings = settings;
+  gameTitleInput.value = settings.gameTitle || 'BINGO';
   inGameDisplayModeSelect.value = settings.inGameDisplayMode;
   pauseDisplayModeSelect.value = settings.pauseDisplayMode;
   updateMainLogoUI(settings.mainLogoPath, settings.mainLogoFileName);
   renderSponsors(settings.sponsors);
+  updateDisplayWarning();
   setupAutoSave();
   loadAppInfo();
 };

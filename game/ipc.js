@@ -39,8 +39,15 @@ const broadcastUpdate = () => {
   });
 };
 
+const emitFullscreenChanged = (win) => {
+  if (!win || win.isDestroyed()) return;
+  win.webContents.send('fullscreen-changed', win.isFullScreen());
+};
+
 const registerWindow = (win) => {
   allWindows.push(win);
+  win.on('enter-full-screen', () => emitFullscreenChanged(win));
+  win.on('leave-full-screen', () => emitFullscreenChanged(win));
 };
 
 const unregisterWindow = (win) => {
@@ -64,6 +71,12 @@ const initializeIpc = () => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) return false;
     win.setFullScreen(!win.isFullScreen());
+    return win.isFullScreen();
+  });
+
+  ipcMain.handle('get-fullscreen', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (!win) return false;
     return win.isFullScreen();
   });
 
@@ -163,6 +176,9 @@ const initializeIpc = () => {
     }
     if (typeof partial.setupComplete === 'boolean') {
       allowed.setupComplete = partial.setupComplete;
+    }
+    if (typeof partial.projectorTipSeen === 'boolean') {
+      allowed.projectorTipSeen = partial.projectorTipSeen;
     }
     if (Object.keys(allowed).length) saveSettings(allowed);
   });

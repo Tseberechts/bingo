@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld('bingo', {
   // App
   exitApp: () => ipcRenderer.send('exit-app'),
   toggleFullscreen: () => ipcRenderer.invoke('toggle-fullscreen'),
+  getFullscreen: () => ipcRenderer.invoke('get-fullscreen'),
   getAppInfo: () => ipcRenderer.invoke('get-app-info'),
 
   // Initial setup wizard
@@ -37,5 +38,10 @@ contextBridge.exposeInMainWorld('bingo', {
     const listener = (_event, state) => callback(state);
     ipcRenderer.on('game-state-update', listener);
     return () => ipcRenderer.removeListener('game-state-update', listener);
+  },
+  onFullscreenChanged: (callback) => {
+    const listener = (_event, isFullScreen) => callback(isFullScreen);
+    ipcRenderer.on('fullscreen-changed', listener);
+    return () => ipcRenderer.removeListener('fullscreen-changed', listener);
   },
 });

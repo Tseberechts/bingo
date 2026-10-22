@@ -1,3 +1,56 @@
+/* Number board — always fully visible, never scrolls */
+.history-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  container-type: size;
+  container-name: history;
+  padding: 0.25rem;
+}
+
+.history-grid {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.board-cell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  /* Scale to panel: ~1/10 width and ~1/9 height, leave room for gaps */
+  font-size: min(7.5cqw, 8.5cqh);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.board-cell-called {
+  background-color: #ffffff;
+  color: #1f2937;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.board-cell-uncalled {
+  background-color: #374151;
+  color: #6b7280;
+  opacity: 0.55;
+}
+
+.board-cell-last {
+  background-color: #fde047;
+  box-shadow: 0 0 0 3px #eab308;
+  transform: scale(1.06);
+  z-index: 1;
+}
+
 /* Sponsor Carousel */
 #sponsorCarousel {
   width: 100%;
@@ -83,4 +136,52 @@
     border-radius: 1rem; /* rounded-2xl */
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
     text-align: center;
+}
+
+.correct-mode-banner {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    background-color: rgba(243, 156, 18, 0.2);
+    border: 1px solid #f39c12;
+    color: #fbbf24;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.correct-mode-banner.hidden {
+    display: none;
+}
+
+.correct-mode-active {
+    background-color: #f39c12 !important;
+    color: #1f2937 !important;
+}
+
+.board-cell-editable:hover {
+    outline: 2px solid #f39c12;
+    outline-offset: 1px;
+}
+
+.game-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: #2ecc71;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+    z-index: 60;
+    font-weight: 600;
+}
+
+.game-toast.show {
+    opacity: 1;
+    transform: translateY(0);
 }

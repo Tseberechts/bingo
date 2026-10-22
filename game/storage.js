@@ -3,6 +3,7 @@ const path = require('path');
 const { app } = require('electron');
 const { gameState, resetState, applyLoadedState } = require('./state');
 const { sanitizeSaveFileName } = require('./paths');
+const { dateFromSaveFileName, buildSaveLabelParts } = require('./save-labels');
 
 let savesDir;
 const lastGameInfoFile = 'last_game.json';
@@ -90,9 +91,44 @@ const deleteAllSaves = () => {
   }
 };
 
+const buildSaveSummary = (fileName, savePath) => {
+  let round = null;
+  let calledCount = null;
+  let when = dateFromSaveFileName(fileName);
+
+  try {
+    const raw = JSON.parse(fs.readFileSync(savePath, 'utf-8'));
+    if (Number.isInteger(raw.round)) round = raw.round;
+    if (Array.isArray(raw.calledNumbers)) calledCount = raw.calledNumbers.length;
+  } catch {
+    // ignore unreadable saves; still list the file
+  }
+
+  if (!when) {
+    try {
+      when = fs.statSync(savePath).mtime;
+    } catch {
+      when = null;
+    }
+  }
+
+  const { label, meta } = buildSaveLabelParts({ fileName, round, calledCount, when });
+
+  return {
+    fileName,
+    label,
+    meta,
+    round,
+    calledCount,
+  };
+};
+
 const listSaveGames = () => {
   if (!savesDir || !fs.existsSync(savesDir)) return [];
-  return fs.readdirSync(savesDir).filter((file) => sanitizeSaveFileName(file));
+  return fs.readdirSync(savesDir)
+    .filter((file) => sanitizeSaveFileName(file))
+    .map((file) => buildSaveSummary(file, path.join(savesDir, file)))
+    .sort((a, b) => String(b.fileName).localeCompare(String(a.fileName)));
 };
 
 const getLastSave = () => {
