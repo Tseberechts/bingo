@@ -16,8 +16,10 @@
   </header>
 
   <main class="w-full max-w-3xl flex flex-col flex-1 min-h-0">
-    <div class="eula-panel flex-1 min-h-0">
-      <pre id="eulaText" class="eula-text" aria-live="polite">Laden…</pre>
+    <div class="eula-panel flex-1 min-h-0" aria-live="polite">
+      <article id="eulaBody" class="eula-prose">
+        <p class="eula-loading">Laden…</p>
+      </article>
     </div>
 
     <div id="acceptBar" class="eula-accept-bar hidden mt-6">
@@ -25,7 +27,7 @@
         <input type="checkbox" id="eulaCheckbox">
         <span>Ik heb de gebruiksvoorwaarden gelezen en ga ermee akkoord.</span>
       </label>
-      <button type="button" id="acceptButton" class="menu-button bg-bingo-green mt-4" disabled>
+      <button type="button" id="acceptButton" class="menu-button bg-bingo-green mt-4 self-start" disabled>
         <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         <span class="btn-label">Ik ga akkoord</span>
       </button>
