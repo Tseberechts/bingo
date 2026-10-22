@@ -3,7 +3,13 @@ const fs = require('fs');
 const path = require('path');
 const { gameState, resetState } = require('./state');
 const { saveState, loadState, deleteSaveFile, listSaveGames, getLastSave } = require('./storage');
-const { getSettings, getSettingsForRenderer, saveSettings, defaultSettings } = require('./settings');
+const {
+  getSettings,
+  getSettingsForRenderer,
+  saveSettings,
+  defaultSettings,
+  isSetupComplete,
+} = require('./settings');
 const { applyDemoSetup } = require('./demo-setup');
 const { callNextNumber, toggleCalledNumber } = require('./logic');
 const {
@@ -162,6 +168,30 @@ const initializeIpc = () => {
       version: pkg.version,
       builtAt: buildInfo?.builtAt ?? null,
     };
+  });
+
+  ipcMain.handle('get-eula', () => {
+    try {
+      const eulaPath = path.join(app.getAppPath(), 'EULA.md');
+      const text = fs.readFileSync(eulaPath, 'utf-8');
+      return { ok: true, text };
+    } catch (error) {
+      return { ok: false, error: error.message || 'Kon EULA niet lezen' };
+    }
+  });
+
+  ipcMain.handle('accept-eula', (event) => {
+    const result = saveSettings({ eulaAcceptedAt: new Date().toISOString() });
+    if (!result.ok) return result;
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win && !win.isDestroyed()) {
+      if (isSetupComplete()) {
+        win.loadFile(path.join(__dirname, '..', 'views/menu/index.html'));
+      } else {
+        win.loadFile(path.join(__dirname, '..', 'views/initial-setup/index.html'));
+      }
+    }
+    return { ok: true };
   });
 
   ipcMain.handle('get-update-status', () => getUpdateStatus());

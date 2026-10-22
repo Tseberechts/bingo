@@ -25,8 +25,8 @@
     "bingo",
     "electron"
   ],
-  "author": "Thomas Seberechts <thomas@seberechts.eu>",
-  "license": "ISC",
+  "author": "Arkastro BV <info@arkastro.be>",
+  "license": "UNLICENSED",
   "type": "commonjs",
   "engines": {
     "node": ">=20"
@@ -54,7 +54,9 @@
       "!.husky/**",
       "!scripts/**",
       "!**/*.md",
-      "README.md"
+      "README.md",
+      "LICENSE",
+      "EULA.md"
     ],
     "extraResources": [],
     "win": {

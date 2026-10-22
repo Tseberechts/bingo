@@ -110,12 +110,19 @@ const setupAutoSave = () => {
   });
 };
 
+const activateTab = (tabId) => {
+  const target = [...tabs].find((t) => t.dataset.tab === tabId) || tabs[0];
+  if (!target) return;
+  tabs.forEach((t) => t.classList.remove('active'));
+  tabContents.forEach((c) => c.classList.add('hidden'));
+  target.classList.add('active');
+  const panel = document.getElementById(target.dataset.tab);
+  if (panel) panel.classList.remove('hidden');
+};
+
 tabs.forEach((tab) => {
   tab.addEventListener('click', () => {
-    tabs.forEach((t) => t.classList.remove('active'));
-    tabContents.forEach((c) => c.classList.add('hidden'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.remove('hidden');
+    activateTab(tab.dataset.tab);
   });
 });
 
@@ -282,8 +289,19 @@ const loadAppInfo = async () => {
   const info = await api.getAppInfo();
   const versionEl = document.getElementById('appVersion');
   const builtAtEl = document.getElementById('appBuiltAt');
+  const copyrightEl = document.getElementById('appCopyright');
   if (versionEl) versionEl.textContent = info?.version || '—';
   if (builtAtEl) builtAtEl.textContent = formatBuiltAt(info?.builtAt);
+  if (copyrightEl) {
+    const year = new Date().getFullYear();
+    copyrightEl.textContent = [
+      `© ${year} Arkastro BV`,
+      'BE1036200718',
+      'Rozenstraat 5, 2580 Putte',
+      'info@arkastro.be',
+      'Alle rechten voorbehouden.',
+    ].join('\n');
+  }
 };
 
 const setupUpdates = async () => {
@@ -332,4 +350,6 @@ window.onload = async () => {
   setupAutoSave();
   loadAppInfo();
   setupUpdates();
+  const hashTab = window.location.hash.replace(/^#/, '');
+  if (hashTab) activateTab(hashTab);
 };

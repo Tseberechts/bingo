@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; script-src 'self'">
+  <title>Gebruiksvoorwaarden — Bingo</title>
+  <link rel="stylesheet" href="../../styles/global.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-dark-bg min-h-screen font-sans text-white p-4 sm:p-6 lg:p-8 flex flex-col items-center">
+
+  <header class="text-center mb-6 w-full max-w-3xl">
+    <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-bingo-yellow">Gebruiksvoorwaarden</h1>
+    <p class="text-gray-400 mt-3">EULA — Bingo door Arkastro BV</p>
+  </header>
+
+  <main class="w-full max-w-3xl flex flex-col flex-1 min-h-0">
+    <div class="eula-panel flex-1 min-h-0">
+      <pre id="eulaText" class="eula-text" aria-live="polite">Laden…</pre>
+    </div>
+
+    <div id="acceptBar" class="eula-accept-bar hidden mt-6">
+      <label class="eula-checkbox-row">
+        <input type="checkbox" id="eulaCheckbox">
+        <span>Ik heb de gebruiksvoorwaarden gelezen en ga ermee akkoord.</span>
+      </label>
+      <button type="button" id="acceptButton" class="menu-button bg-bingo-green mt-4" disabled>
+        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span class="btn-label">Ik ga akkoord</span>
+      </button>
+      <p id="acceptError" class="field-error hidden mt-3" role="alert"></p>
+    </div>
+
+    <div id="backBar" class="mt-6 flex justify-end hidden">
+      <a id="backLink" href="../settings/index.html#about" class="menu-button-secondary">
+        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        <span class="btn-label">Terug</span>
+      </a>
+    </div>
+  </main>
+
+  <script src="index.js"></script>
+</body>
+</html>

@@ -53,7 +53,7 @@ Packaged apps use the plain semver from `package.json` (e.g. `1.0.1`). Each buil
 
 ## Downloads & auto-update
 
-Installers are on **GitHub Releases** and [arkastro.be/bingo](https://arkastro.be/bingo). A packaged app checks for updates on launch (quietly) and from **Voorkeuren → Over**. Updates are never auto-installed mid-game.
+Public downloads live at **[arkastro.be/bingo](https://arkastro.be/bingo)**. A packaged app checks for updates on launch (quietly) and from **Voorkeuren → Over**. Updates are never auto-installed mid-game.
 
 - **Windows / Linux**: download in-app, then choose **Herstart om te installeren** (NSIS / AppImage). Portable/`.deb` remain available as manual downloads.
 - **macOS**: in-app install is disabled (ad-hoc signing breaks Squirrel.Mac). Version checks still work; **Download update** opens [arkastro.be/bingo](https://arkastro.be/bingo) so you can install the latest DMG manually.
@@ -74,9 +74,10 @@ Local `dist` runs do **not** publish (`EB_PUBLISH` defaults to `never`). CI buil
 
 ## First run
 
-1. Complete the guided setup wizard (title, logo, display modes, sponsors), or choose **Gebruik de demo** for a ready-made sample.
-2. Use **Later verder** to pause setup; the next launch resumes on the same step.
-3. Start a new game, or resume / load a save. Change anything later in **Voorkeuren**.
+1. Accept the Dutch EULA (Gebruiksvoorwaarden) on first launch.
+2. Complete the guided setup wizard (title, logo, display modes, sponsors), or choose **Gebruik de demo** for a ready-made sample.
+3. Use **Later verder** to pause setup; the next launch resumes on the same step.
+4. Start a new game, or resume / load a save. Change anything later in **Voorkeuren**.
 
 Settings, logos, sponsors, and savegames live under the Electron **user data** folder (Developer menu → *Open Data Folder* in unpackaged builds).
 
@@ -91,14 +92,12 @@ Settings, logos, sponsors, and savegames live under the Electron **user data** f
 - `main.js` — Electron main process, secure window prefs + preload
 - `preload.js` — narrow `window.bingo` IPC API (`contextIsolation`)
 - `game/` — settings, saves, IPC, updater, pure game logic
-- `views/` — multi-page UI (menu, game, settings, initial setup)
+- `views/` — multi-page UI (menu, game, settings, initial setup, EULA)
 
 Board size is fixed at **90** numbers (10 columns) via `game/constants.js` for a future setting.
 
-## License & monetization
-
-ISC — free to use, fork, and redistribute. The update feed is public GitHub Releases today; the updater module (`game/updater.js`) is written so a future paid/generic HTTPS feed can replace it without a rewrite. If you later want a proprietary “Pro” product of this same codebase, change the license **before** wide adoption — ISC already grants redistribution rights forever.
-
 ## License
 
-ISC
+Proprietary © [Arkastro BV](https://arkastro.be) (Rozenstraat 5, 2580 Putte, BE1036200718). See [`LICENSE`](LICENSE) and [`EULA.md`](EULA.md).
+
+These legal texts are a starting template — have a Belgian lawyer review them before relying on them commercially. The in-app EULA page shows `EULA.md`. The updater can later point at a paid/generic HTTPS feed without a rewrite.

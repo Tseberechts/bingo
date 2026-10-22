@@ -10,6 +10,7 @@ const defaultSettings = {
   setupStep: 0,
   setupComplete: false,
   projectorTipSeen: false,
+  eulaAcceptedAt: null,
 };
 
 const mergeSettings = (defaults, saved = {}) => ({

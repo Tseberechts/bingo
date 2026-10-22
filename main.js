@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, shell, dialog } = require('electron');
 const path = require('path');
 const { initializeStorage, deleteAllSaves } = require('./game/storage');
 const { initializeIpc, registerWindow, unregisterWindow } = require('./game/ipc');
-const { initializeSettings, isSetupComplete, deleteSettings } = require('./game/settings');
+const { initializeSettings, isSetupComplete, isEulaAccepted, deleteSettings } = require('./game/settings');
 const { initializeUpdater, scheduleStartupCheck } = require('./game/updater');
 
 let mainWindow;
@@ -21,7 +21,11 @@ function createWindow() {
     },
   });
 
-  if (isSetupComplete()) {
+  if (!isEulaAccepted()) {
+    mainWindow.loadFile(path.join(__dirname, 'views/eula/index.html'), {
+      query: { mode: 'accept' },
+    });
+  } else if (isSetupComplete()) {
     mainWindow.loadFile(path.join(__dirname, 'views/menu/index.html'));
   } else {
     mainWindow.loadFile(path.join(__dirname, 'views/initial-setup/index.html'));

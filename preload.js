@@ -6,6 +6,8 @@ contextBridge.exposeInMainWorld('bingo', {
   toggleFullscreen: () => ipcRenderer.invoke('toggle-fullscreen'),
   getFullscreen: () => ipcRenderer.invoke('get-fullscreen'),
   getAppInfo: () => ipcRenderer.invoke('get-app-info'),
+  getEula: () => ipcRenderer.invoke('get-eula'),
+  acceptEula: () => ipcRenderer.invoke('accept-eula'),
   getUpdateStatus: () => ipcRenderer.invoke('get-update-status'),
   checkForUpdates: (options) => ipcRenderer.invoke('check-for-updates', options),
   downloadUpdate: () => ipcRenderer.invoke('download-update'),

@@ -1,0 +1,50 @@
+.eula-panel {
+  background-color: #374151;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  overflow: auto;
+  max-height: min(60vh, 36rem);
+}
+
+.eula-text {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #e5e7eb;
+}
+
+.eula-accept-bar {
+  background-color: #374151;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.eula-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.eula-checkbox-row input {
+  margin-top: 0.25rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+}
+
+.field-error {
+  color: #fca5a5;
+  font-size: 0.9rem;
+}
+
+#acceptButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

@@ -66,6 +66,12 @@ const isSetupComplete = () => {
   return getSettings().setupComplete === true;
 };
 
+/** True when the user has accepted the EULA on this machine. */
+const isEulaAccepted = () => {
+  const at = getSettings().eulaAcceptedAt;
+  return typeof at === 'string' && at.length > 0;
+};
+
 /** Settings shaped for the renderer (file URLs for images). */
 const getSettingsForRenderer = () => {
   const current = getSettings();
@@ -105,5 +111,6 @@ module.exports = {
   getSettingsForRenderer,
   settingsExist,
   isSetupComplete,
+  isEulaAccepted,
   deleteSettings,
 };
