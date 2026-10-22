@@ -20,7 +20,10 @@
     <div id="setupBanner" class="w-full max-w-md mb-6 hidden">
         <div class="setup-banner">
             <p class="text-sm text-amber-100 mb-3">Je eerste setup is nog niet afgerond. Rond hem af om titel, logo en weergave in te stellen.</p>
-            <a href="../initial-setup/index.html" id="finishSetupButton" class="menu-button bg-bingo-orange text-base py-3">Setup afronden</a>
+            <a href="../initial-setup/index.html" id="finishSetupButton" class="menu-button bg-bingo-orange text-base py-3">
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                <span class="btn-label">Setup afronden</span>
+            </a>
         </div>
     </div>
 
@@ -30,7 +33,10 @@
                 Tip: verbind de beamer in spiegelmodus (dupliceren), open Bingo, en tik op
                 <strong>Volledig scherm</strong> zodat iedereen het bord goed ziet.
             </p>
-            <button type="button" id="dismissProjectorTip" class="menu-button-secondary text-sm">Begrepen</button>
+            <button type="button" id="dismissProjectorTip" class="menu-button-secondary text-sm">
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="btn-label">Begrepen</span>
+            </button>
         </div>
     </div>
 
@@ -38,19 +44,43 @@
         <div class="update-banner">
             <p id="updateBannerText" class="text-sm text-gray-200 mb-3"></p>
             <div class="flex flex-wrap gap-2 justify-center">
-                <button type="button" id="updateBannerAction" class="menu-button bg-bingo-green text-sm py-2 px-4">Download</button>
-                <button type="button" id="dismissUpdateBanner" class="menu-button-secondary text-sm">Later</button>
+                <button type="button" id="updateBannerAction" class="menu-button bg-bingo-green text-sm py-2 px-4">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span class="btn-label">Download</span>
+                </button>
+                <button type="button" id="dismissUpdateBanner" class="menu-button-secondary text-sm">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="btn-label">Later</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <main class="flex flex-col gap-6 w-full max-w-md">
-        <button id="newGameButton" class="menu-button bg-bingo-green">Nieuw Spel</button>
-        <button id="resumeGameButton" class="menu-button bg-bingo-blue">Laatste Spel Hervatten</button>
-        <button id="loadGameButton" class="menu-button bg-gray-700">Spel Laden</button>
-        <button id="fullscreenButton" class="menu-button bg-gray-700" type="button" aria-pressed="false">Volledig scherm</button>
-        <a href="../settings/index.html" id="preferencesButton" class="menu-button bg-gray-700">Voorkeuren</a>
-        <button id="exitButton" class="menu-button bg-bingo-red mt-4">Afsluiten</button>
+    <main class="menu-actions flex flex-col gap-4 w-full max-w-md">
+        <button id="newGameButton" class="menu-button bg-bingo-green">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="btn-label">Nieuw Spel</span>
+        </button>
+        <button id="resumeGameButton" class="menu-button bg-bingo-blue">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="btn-label">Laatste Spel Hervatten</span>
+        </button>
+        <button id="loadGameButton" class="menu-button bg-gray-700">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/></svg>
+            <span class="btn-label">Spel Laden</span>
+        </button>
+        <button id="fullscreenButton" class="menu-button bg-gray-700" type="button" aria-pressed="false">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            <span class="btn-label">Volledig scherm</span>
+        </button>
+        <a href="../settings/index.html" id="preferencesButton" class="menu-button bg-gray-700">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="btn-label">Voorkeuren</span>
+        </a>
+        <button id="exitButton" class="menu-button bg-bingo-red mt-2">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span class="btn-label">Afsluiten</span>
+        </button>
         <p id="appVersionLabel" class="text-center text-sm text-gray-500 mt-2" aria-live="polite"></p>
     </main>
 
@@ -60,7 +90,10 @@
             <div id="saveGameList" class="flex flex-col gap-4 mb-6">
                 <!-- Save games will be listed here -->
             </div>
-            <button id="closeModalButton" class="py-3 px-8 bg-bingo-red text-white font-bold text-lg rounded-xl shadow-md">Annuleren</button>
+            <button id="closeModalButton" class="action-button bg-bingo-red text-lg">
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <span class="btn-label">Annuleren</span>
+            </button>
         </div>
     </div>
 

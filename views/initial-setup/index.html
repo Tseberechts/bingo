@@ -33,7 +33,10 @@
         <p id="titleError" class="field-error hidden" role="alert">Vul een titel in voor je bingo.</p>
         <div class="mt-8 pt-6 border-t border-gray-600">
           <p class="text-gray-400 text-sm mb-3">Of spring meteen naar een kant-en-klare demo met titel, logo, sponsors en weergave.</p>
-          <button type="button" id="demoButton" class="menu-button bg-bingo-blue text-base py-3">Gebruik de demo</button>
+          <button type="button" id="demoButton" class="menu-button bg-bingo-blue text-base py-3">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            <span class="btn-label">Gebruik de demo</span>
+          </button>
         </div>
       </section>
 
@@ -56,7 +59,10 @@
           </div>
         </div>
         <div class="setting-item justify-end">
-          <button type="button" id="deleteMainLogo" class="menu-button bg-bingo-red p-2 text-sm hidden">Verwijder logo</button>
+          <button type="button" id="deleteMainLogo" class="menu-button bg-bingo-red text-sm py-2 px-4 hidden">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <span class="btn-label">Verwijder logo</span>
+          </button>
         </div>
         <p id="logoError" class="field-error hidden" role="alert"></p>
       </section>
@@ -103,7 +109,10 @@
               <img id="sponsorLogoPreview" class="logo-preview hidden" src="" alt="Sponsor preview">
             </div>
           </div>
-          <button type="button" id="addSponsorButton" class="menu-button bg-bingo-blue self-end text-base py-3">Toevoegen</button>
+          <button type="button" id="addSponsorButton" class="menu-button bg-bingo-blue self-end text-base py-3">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="btn-label">Toevoegen</span>
+          </button>
         </div>
         <p id="sponsorError" class="field-error hidden" role="alert"></p>
       </section>
@@ -119,10 +128,19 @@
     <p id="wizardError" class="field-error text-center mt-4 hidden" role="alert"></p>
 
     <div class="wizard-footer mt-8 flex flex-wrap items-center justify-between gap-4">
-      <button type="button" id="backButton" class="menu-button-secondary hidden">Vorige</button>
+      <button type="button" id="backButton" class="menu-button-secondary hidden">
+        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        <span class="btn-label">Vorige</span>
+      </button>
       <div class="flex flex-wrap items-center gap-3 ml-auto">
-        <button type="button" id="laterButton" class="menu-button-secondary">Later verder</button>
-        <button type="button" id="nextButton" class="menu-button bg-bingo-green px-8 py-3 text-xl w-auto">Volgende</button>
+        <button type="button" id="laterButton" class="menu-button-secondary">
+          <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span class="btn-label">Later verder</span>
+        </button>
+        <button type="button" id="nextButton" class="menu-button bg-bingo-green px-8 py-3 text-xl">
+          <span class="btn-label">Volgende</span>
+          <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
       </div>
     </div>
 

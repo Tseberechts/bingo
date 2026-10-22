@@ -5,6 +5,12 @@ body {
     justify-content: safe center;
 }
 
+/* Main menu: equal-width stacked actions (within max-w-md), not page-wide elsewhere */
+.menu-actions .menu-button {
+    display: flex;
+    width: 100%;
+}
+
 .setup-banner,
 .projector-tip,
 .update-banner {
@@ -67,10 +73,20 @@ body {
     background-color: rgba(243, 156, 18, 0.15);
 }
 
+.setup-banner .menu-button,
+.projector-tip .menu-button-secondary {
+    margin-inline: auto;
+}
+
 .save-game-item {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+.save-game-item .menu-button {
+    justify-content: flex-start;
+    text-align: left;
 }
 
 .save-game-label {

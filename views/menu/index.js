@@ -32,13 +32,19 @@ resumeGameButton.addEventListener('click', async () => {
   }
 });
 
+const setButtonLabel = (button, text) => {
+  const label = button?.querySelector('.btn-label');
+  if (label) label.textContent = text;
+  else if (button) button.textContent = text;
+};
+
 const updateFullscreenButton = (isOn) => {
   const on = Boolean(isOn);
   fullscreenButton.setAttribute('aria-pressed', on ? 'true' : 'false');
   fullscreenButton.classList.toggle('fullscreen-active', on);
   fullscreenButton.classList.toggle('bg-gray-700', !on);
   fullscreenButton.classList.toggle('bg-bingo-green', on);
-  fullscreenButton.textContent = on ? 'Volledig scherm uit' : 'Volledig scherm';
+  setButtonLabel(fullscreenButton, on ? 'Volledig scherm uit' : 'Volledig scherm');
 };
 
 fullscreenButton.addEventListener('click', async () => {
@@ -69,9 +75,17 @@ const populateSaveGames = async () => {
     container.className = 'save-game-item';
 
     const loadButton = document.createElement('button');
-    loadButton.className = 'menu-button bg-bingo-blue flex-grow text-left';
+    loadButton.className = 'menu-button bg-bingo-blue flex-1 text-left min-w-0';
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('class', 'btn-icon');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.setAttribute('stroke', 'currentColor');
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+    loadButton.appendChild(icon);
     const labelEl = document.createElement('span');
-    labelEl.className = 'save-game-label';
+    labelEl.className = 'save-game-label btn-label';
     labelEl.textContent = label;
     loadButton.appendChild(labelEl);
     if (meta) {
@@ -161,7 +175,7 @@ const showUpdateBanner = (status) => {
     updateBannerText.textContent = status.version
       ? `Update v${status.version} is beschikbaar.`
       : 'Er is een update beschikbaar.';
-    updateBannerAction.textContent = 'Download';
+    setButtonLabel(updateBannerAction, 'Download');
     updateBannerAction.onclick = async () => {
       const result = await api.downloadUpdate();
       if (!result?.ok) {
@@ -176,7 +190,7 @@ const showUpdateBanner = (status) => {
     updateBannerText.textContent = typeof status.progress === 'number'
       ? `Update downloaden… ${status.progress}%`
       : 'Update downloaden…';
-    updateBannerAction.textContent = 'Bezig…';
+    setButtonLabel(updateBannerAction, 'Bezig…');
     updateBannerAction.onclick = null;
     updateBanner.classList.remove('hidden');
     return;
@@ -186,7 +200,7 @@ const showUpdateBanner = (status) => {
     updateBannerText.textContent = status.version
       ? `v${status.version} is klaar om te installeren.`
       : 'Update is klaar om te installeren.';
-    updateBannerAction.textContent = 'Herstart om te installeren';
+    setButtonLabel(updateBannerAction, 'Herstart om te installeren');
     updateBannerAction.onclick = () => {
       api.installUpdate();
     };

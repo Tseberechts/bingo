@@ -53,9 +53,10 @@ Packaged apps use the plain semver from `package.json` (e.g. `1.0.1`). Each buil
 
 ## Downloads & auto-update
 
-Installers are on **GitHub Releases**. A packaged app checks for updates on launch (quietly) and from **Voorkeuren → Over**. Updates are never auto-installed mid-game; you download and choose **Herstart om te installeren**.
+Installers are on **GitHub Releases** and [arkastro.be/bingo](https://arkastro.be/bingo). A packaged app checks for updates on launch (quietly) and from **Voorkeuren → Over**. Updates are never auto-installed mid-game.
 
-Auto-update uses the NSIS installer (Windows), zip (macOS), and AppImage (Linux). Portable/`.deb`/`.dmg` remain available as manual downloads.
+- **Windows / Linux**: download in-app, then choose **Herstart om te installeren** (NSIS / AppImage). Portable/`.deb` remain available as manual downloads.
+- **macOS**: in-app install is disabled (ad-hoc signing breaks Squirrel.Mac). Version checks still work; **Download update** opens [arkastro.be/bingo](https://arkastro.be/bingo) so you can install the latest DMG manually.
 
 Builds are **not notarized** (no paid Apple/Windows certificates yet):
 

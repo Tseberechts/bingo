@@ -307,6 +307,8 @@ const setupUpdates = async () => {
       renderUpdateStatus(result?.status);
       if (!result?.ok) {
         showToast(result?.error || 'Download mislukt', true);
+      } else if (result?.openedExternal) {
+        showToast('Downloadpagina geopend');
       }
     });
   }

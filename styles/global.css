@@ -8,37 +8,94 @@ html, body {
 }
 
 .menu-button {
-    display: block;
-    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: auto;
+    max-width: 100%;
     padding: 1rem 1.5rem;
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
     text-decoration: none;
     color: white;
-    border-radius: 0.75rem; /* rounded-xl */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+    border: none;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease-in-out;
 }
 
 .menu-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.menu-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .menu-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: auto;
+    max-width: 100%;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     background-color: transparent;
-    border: 2px solid #4b5563; /* gray-600 */
-    color: #9ca3af; /* gray-400 */
+    border: 2px solid #4b5563;
+    color: #9ca3af;
     border-radius: 0.75rem;
     text-decoration: none;
     text-align: center;
+    cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
 
 .menu-button-secondary:hover {
     background-color: #4b5563;
     color: white;
+}
+
+.btn-icon {
+    width: 1.15em;
+    height: 1.15em;
+    flex-shrink: 0;
+    display: block;
+}
+
+.btn-label {
+    line-height: 1.2;
+}
+
+.action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: auto;
+    max-width: 100%;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-1px);
+}
+
+.action-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
 }

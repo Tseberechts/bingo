@@ -123,7 +123,12 @@ const updateUI = (gameState) => {
   }
 
   callNextButton.disabled = isGameOver;
-  callNextButton.textContent = isGameOver ? 'SPEL VOORBIJ' : 'ROEP VOLGEND NUMMER AF';
+  const callLabel = callNextButton.querySelector('.btn-label');
+  if (callLabel) {
+    callLabel.textContent = isGameOver ? 'SPEL VOORBIJ' : 'VOLGENDE NUMMER';
+  } else {
+    callNextButton.textContent = isGameOver ? 'SPEL VOORBIJ' : 'VOLGENDE NUMMER';
+  }
   renderHistory(calledNumbers, lastCalled, maxNumber, boardCols);
 };
 
@@ -220,12 +225,16 @@ const togglePause = () => {
     setupDisplay(pauseContent, pauseDisplayTitle, window.settings, 'pauseDisplayMode');
     pauseOverlay.classList.remove('hidden');
     pauseOverlay.classList.add('flex');
-    footerPauseButton.textContent = 'HERVATTEN';
+    const pauseLabel = footerPauseButton.querySelector('.btn-label');
+    if (pauseLabel) pauseLabel.textContent = 'HERVATTEN';
+    else footerPauseButton.textContent = 'HERVATTEN';
   } else {
     pauseOverlay.classList.add('hidden');
     pauseOverlay.classList.remove('flex');
     clearInterval(sponsorInterval);
-    footerPauseButton.textContent = 'PAUZE';
+    const pauseLabel = footerPauseButton.querySelector('.btn-label');
+    if (pauseLabel) pauseLabel.textContent = 'PAUZE';
+    else footerPauseButton.textContent = 'PAUZE';
   }
 };
 

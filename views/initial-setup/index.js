@@ -201,7 +201,10 @@ const showStep = (step) => {
   renderStepDots();
 
   backButton.classList.toggle('hidden', currentStep === 0);
-  nextButton.textContent = currentStep === TOTAL_STEPS - 1 ? 'Aan de slag' : 'Volgende';
+  const nextLabel = nextButton.querySelector('.btn-label');
+  const nextText = currentStep === TOTAL_STEPS - 1 ? 'Aan de slag' : 'Volgende';
+  if (nextLabel) nextLabel.textContent = nextText;
+  else nextButton.textContent = nextText;
 
   if (currentStep === TOTAL_STEPS - 1) renderSummary();
   clearErrors();

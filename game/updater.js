@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 /**
@@ -10,6 +10,9 @@ const UPDATE_FEED = {
   owner: 'Tseberechts',
   repo: 'bingo',
 };
+
+/** macOS: ad-hoc signatures break Squirrel.Mac zip installs — open the download page instead. */
+const MAC_DOWNLOAD_URL = 'https://arkastro.be/bingo';
 
 const STARTUP_CHECK_DELAY_MS = 4000;
 
@@ -145,7 +148,7 @@ const checkForUpdates = async ({ interactive = false } = {}) => {
 };
 
 /**
- * @returns {Promise<{ ok: boolean, error?: string, status: object }>}
+ * @returns {Promise<{ ok: boolean, error?: string, openedExternal?: boolean, status: object }>}
  */
 const downloadUpdate = async () => {
   if (!app.isPackaged) {
@@ -153,6 +156,21 @@ const downloadUpdate = async () => {
   }
   if (status.state !== 'available' && status.state !== 'error') {
     return { ok: false, error: 'Geen update om te downloaden', status: getUpdateStatus() };
+  }
+
+  // Ad-hoc Mac builds cannot be installed via Squirrel.Mac — send users to the download page.
+  if (process.platform === 'darwin') {
+    try {
+      await shell.openExternal(MAC_DOWNLOAD_URL);
+      setStatus({ state: 'available', progress: null, error: null, interactive: true });
+      return { ok: true, openedExternal: true, status: getUpdateStatus() };
+    } catch (err) {
+      setStatus({
+        state: 'error',
+        error: err?.message || 'Kon downloadpagina niet openen',
+      });
+      return { ok: false, error: err?.message, status: getUpdateStatus() };
+    }
   }
 
   initializeUpdater();
@@ -177,6 +195,9 @@ const quitAndInstall = () => {
   if (!app.isPackaged) {
     return { ok: false, error: 'Alleen beschikbaar in de geïnstalleerde app' };
   }
+  if (process.platform === 'darwin') {
+    return { ok: false, error: 'Installeer handmatig via arkastro.be/bingo' };
+  }
   if (status.state !== 'downloaded') {
     return { ok: false, error: 'Geen gedownloade update' };
   }
@@ -195,6 +216,7 @@ const scheduleStartupCheck = () => {
 
 module.exports = {
   UPDATE_FEED,
+  MAC_DOWNLOAD_URL,
   initializeUpdater,
   checkForUpdates,
   downloadUpdate,
