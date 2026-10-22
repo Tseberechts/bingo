@@ -8,7 +8,7 @@
     "start": "concurrently -k \"npm run watch:css\" \"electron .\"",
     "build:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css",
     "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch",
-    "test": "node --test test/**/*.test.js",
+    "test": "node --test test/*.test.js",
     "lint": "eslint .",
     "version:suggest": "node scripts/suggest-version.js",
     "dist": "npm run build:css && node scripts/run-dist.js --win --mac --linux",
