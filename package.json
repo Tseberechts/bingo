@@ -25,7 +25,7 @@
     "bingo",
     "electron"
   ],
-  "author": "Tseberechts",
+  "author": "Thomas Seberechts <thomas@seberechts.eu>",
   "license": "ISC",
   "type": "commonjs",
   "engines": {
