@@ -26,10 +26,28 @@ Useful scripts:
 | `npm run build:css` | One-shot CSS build |
 | `npm test` | Unit tests (no Electron required) |
 | `npm run lint` | ESLint |
+| `npm run version:suggest` | Suggest next semver bump from Conventional Commits |
 | `npm run dist:win` | Windows NSIS + portable |
 | `npm run dist:mac` | macOS DMG + zip |
 | `npm run dist:linux` | Linux AppImage + deb |
 | `npm run dist` | All platform targets (from a capable host) |
+
+## Commits & releases
+
+Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/) (enforced by a husky `commit-msg` hook via commitlint):
+
+| Type | Effect on next version |
+|------|------------------------|
+| `feat:` | minor |
+| `fix:` | patch |
+| `feat!:` / `BREAKING CHANGE:` | major |
+| `chore` / `docs` / `style` / `refactor` / `test` / `ci` / `build` / `perf` | no bump (unless breaking) |
+
+Release flow:
+
+1. `npm run version:suggest` — review the recommendation
+2. `npm version patch|minor|major` — bumps `package.json`, commits, and tags
+3. `git push && git push --tags` — CI builds stamped installers for `v*` tags
 
 ## First run
 
@@ -47,7 +65,9 @@ Settings, logos, sponsors, and savegames live under the Electron **user data** f
 
 ## Packaging & SmartScreen
 
-Installers are produced under `release/`. Builds are **unsigned** by default:
+Installers are produced under `release/`. Each `dist` run stamps the packaged version as `1.0.0-YYYYMMDD.HHmm` (base from `package.json` plus local build time; CI uses `SOURCE_DATE_EPOCH` from the tag commit so all platforms share one stamp). The About tab and menu show that version and build time.
+
+Builds are **unsigned** by default:
 
 - **Windows**: SmartScreen may warn on first open; choose “More info” → “Run anyway” for trusted local/USB installs.
 - **macOS**: Gatekeeper may block unsigned apps; right-click → Open, or `xattr -cr` on the app if you distribute unsigned builds internally.

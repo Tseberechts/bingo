@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld('bingo', {
   // App
   exitApp: () => ipcRenderer.send('exit-app'),
   toggleFullscreen: () => ipcRenderer.invoke('toggle-fullscreen'),
+  getAppInfo: () => ipcRenderer.invoke('get-app-info'),
 
   // Initial setup wizard
   saveSetupProgress: (payload) => ipcRenderer.invoke('save-setup-progress', payload),

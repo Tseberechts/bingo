@@ -14,7 +14,7 @@ module.exports = [
   },
   js.configs.recommended,
   {
-    files: ['main.js', 'preload.js', 'game/**/*.js', 'eslint.config.js'],
+    files: ['main.js', 'preload.js', 'game/**/*.js', 'scripts/**/*.js', 'eslint.config.js', 'commitlint.config.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',

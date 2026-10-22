@@ -90,3 +90,12 @@ document.addEventListener('keydown', (event) => {
     api.toggleFullscreen();
   }
 });
+
+const appVersionLabel = document.getElementById('appVersionLabel');
+if (appVersionLabel && api.getAppInfo) {
+  api.getAppInfo().then((info) => {
+    if (info?.version) {
+      appVersionLabel.textContent = `v${info.version}`;
+    }
+  });
+}

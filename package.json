@@ -10,10 +10,12 @@
     "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch",
     "test": "node --test test/**/*.test.js",
     "lint": "eslint .",
-    "dist": "npm run build:css && electron-builder --win --mac --linux",
-    "dist:win": "npm run build:css && electron-builder --win",
-    "dist:mac": "npm run build:css && electron-builder --mac",
-    "dist:linux": "npm run build:css && electron-builder --linux"
+    "version:suggest": "node scripts/suggest-version.js",
+    "dist": "npm run build:css && node scripts/run-dist.js --win --mac --linux",
+    "dist:win": "npm run build:css && node scripts/run-dist.js --win",
+    "dist:mac": "npm run build:css && node scripts/run-dist.js --mac",
+    "dist:linux": "npm run build:css && node scripts/run-dist.js --linux",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -48,6 +50,9 @@
       "!.cache/**",
       "!sponsors/**",
       "!eslint.config.js",
+      "!commitlint.config.js",
+      "!.husky/**",
+      "!scripts/**",
       "!**/*.md",
       "README.md"
     ],
@@ -78,13 +83,18 @@
     }
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^9.39.1",
     "@tailwindcss/cli": "^4.1.17",
     "concurrently": "^9.2.1",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
+    "conventional-recommended-bump": "^9.0.0",
     "electron": "^39.2.3",
     "electron-builder": "^26.0.12",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
+    "husky": "^9.1.7",
     "tailwindcss": "^4.1.17"
   }
 }

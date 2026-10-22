@@ -186,6 +186,24 @@ deleteMainLogoButton.addEventListener('click', async () => {
   showToast('Hoofdlogo verwijderd!');
 });
 
+const formatBuiltAt = (iso) => {
+  if (!iso) return 'Ontwikkelversie';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return 'Ontwikkelversie';
+  return new Intl.DateTimeFormat('nl-NL', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  }).format(date);
+};
+
+const loadAppInfo = async () => {
+  const info = await api.getAppInfo();
+  const versionEl = document.getElementById('appVersion');
+  const builtAtEl = document.getElementById('appBuiltAt');
+  if (versionEl) versionEl.textContent = info?.version || '—';
+  if (builtAtEl) builtAtEl.textContent = formatBuiltAt(info?.builtAt);
+};
+
 window.onload = async () => {
   const settings = await api.getSettings();
   gameTitleInput.value = settings.gameTitle || 'MIJN AWESOME BINGO';
@@ -194,4 +212,5 @@ window.onload = async () => {
   updateMainLogoUI(settings.mainLogoPath, settings.mainLogoFileName);
   renderSponsors(settings.sponsors);
   setupAutoSave();
+  loadAppInfo();
 };

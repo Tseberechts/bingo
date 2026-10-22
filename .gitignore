@@ -4,6 +4,9 @@ node_modules/
 # Generated CSS (built via npm run build:css / prestart / dist)
 styles/output.css
 
+# Build stamp written by scripts/run-dist.js
+game/build-info.json
+
 # Electron builder / caches
 release/
 dist/

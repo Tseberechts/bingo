@@ -11,6 +11,8 @@ const {
   isAllowedImageBuffer,
   toFileUrl,
 } = require('./paths');
+const { readBuildInfo } = require('./version');
+const pkg = require('../package.json');
 
 const DISPLAY_MODES = new Set(['hide', 'sponsors', 'logo']);
 const SETUP_STEP_COUNT = 5;
@@ -127,6 +129,20 @@ const initializeIpc = () => {
     if (!result.ok) return result;
     loadMenu(event);
     return { ok: true };
+  });
+
+  ipcMain.handle('get-app-info', () => {
+    const buildInfo = readBuildInfo();
+    if (app.isPackaged) {
+      return {
+        version: app.getVersion(),
+        builtAt: buildInfo?.builtAt ?? null,
+      };
+    }
+    return {
+      version: buildInfo?.version || pkg.version,
+      builtAt: buildInfo?.builtAt ?? null,
+    };
   });
 
   ipcMain.handle('get-settings', () => getSettingsForRenderer());
