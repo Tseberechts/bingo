@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; script-src 'self'">
+  <title>Help — Bingo</title>
+  <link rel="stylesheet" href="../../styles/global.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-dark-bg min-h-screen font-sans text-white p-4 sm:p-6 lg:p-8 flex flex-col">
+
+<header class="text-center mb-4">
+  <h1 class="text-4xl font-extrabold tracking-tight text-bingo-yellow">Help</h1>
+  <p class="text-gray-400 mt-2">Korte handleiding voor Bingo</p>
+</header>
+
+<main class="flex-grow flex flex-col w-full max-w-3xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6 min-h-0">
+  <div class="help-panel flex-1 min-h-0 overflow-y-auto">
+    <article class="help-prose">
+      <section>
+        <h2>Avond starten</h2>
+        <ul>
+          <li>Rond bij de eerste start de setup af (of kies de demo).</li>
+          <li><strong>Nieuw Spel</strong> start een avond; <strong>Laatste Spel Hervatten</strong> of <strong>Spel Laden</strong> heropent een opgeslagen spel.</li>
+          <li>Zet <strong>Volledig scherm</strong> aan (of druk <strong>F11</strong>) zodat het bord goed leesbaar is.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Beamer</h2>
+        <ul>
+          <li>Verbind de beamer of TV in <strong>spiegelmodus</strong> (dupliceren).</li>
+          <li>Open Bingo en kies <strong>Volledig scherm</strong> zodat iedereen het bord goed ziet.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Tijdens het spel</h2>
+        <ul>
+          <li><strong>Spatiebalk</strong> of <strong>Enter</strong>: volgend nummer.</li>
+          <li><strong>P</strong>: pauze / hervatten.</li>
+          <li><strong>Corrigeermodus</strong>: tik op een nummer op het bord om het aan of uit te zetten.</li>
+          <li><strong>Volgende ronde</strong>: reset het bord voor een nieuwe ronde (het rondennummer stijgt).</li>
+          <li>Via het menu (rechtsonder): terug naar het hoofdmenu (spel blijft bewaard) of spel afsluiten (opslag wordt verwijderd).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Voorkeuren</h2>
+        <ul>
+          <li>Pas de <strong>speltitel</strong> aan.</li>
+          <li>Kies wat er tijdens het spel en bij pauze te zien is: niets, sponsors of hoofdlogo.</li>
+          <li>Upload een <strong>hoofdlogo</strong> en beheer <strong>sponsors</strong> (naam + logo).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Veelgestelde vragen</h2>
+        <dl class="help-faq">
+          <dt>Is het helemaal willekeurig?</dt>
+          <dd>Ja. Elk nog niet getrokken nummer heeft evenveel kans; er is geen voorkeur of herhaling binnen dezelfde ronde.</dd>
+
+          <dt>Kan hetzelfde nummer twee keer vallen?</dt>
+          <dd>Nee, binnen een ronde. Bij <strong>Volgende ronde</strong> begint het bord opnieuw (1–90).</dd>
+
+          <dt>Hoeveel nummers zijn er?</dt>
+          <dd>Standaard <strong>90</strong> (bord met 10 kolommen).</dd>
+
+          <dt>Wat doet Corrigeermodus?</dt>
+          <dd>Hiermee zet je handmatig een nummer aan of uit als er een vergissing was. De trekking blijft verder willekeurig.</dd>
+
+          <dt>Blijft mijn spel bewaard?</dt>
+          <dd>Terug naar het menu bewaart het spel. <strong>Spel afsluiten</strong> verwijdert die opslag.</dd>
+
+          <dt>Heb ik internet nodig?</dt>
+          <dd>Nee om te spelen. Internet is alleen nodig om updates te controleren.</dd>
+
+          <dt>Hoe toon ik Bingo op de beamer?</dt>
+          <dd>Gebruik spiegelmodus (dupliceren) en volledig scherm. Er is geen apart publieksvenster in deze versie.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Hulp nodig?</h2>
+        <ul>
+          <li>E-mail: info@arkastro.be</li>
+          <li>Website: arkastro.be</li>
+        </ul>
+      </section>
+    </article>
+  </div>
+
+  <div class="mt-8 flex justify-end">
+    <a href="../menu/index.html" class="menu-button-secondary">
+      <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      <span class="btn-label">Terug</span>
+    </a>
+  </div>
+</main>
+
+<script src="index.js"></script>
+</body>
+</html>

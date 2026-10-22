@@ -1,0 +1,61 @@
+.help-panel {
+  min-height: 0;
+}
+
+.help-prose {
+  color: #d1d5db;
+  font-size: 0.975rem;
+  line-height: 1.65;
+}
+
+.help-prose section + section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(156, 163, 175, 0.25);
+}
+
+.help-prose h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fdba74;
+}
+
+.help-prose ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.help-prose li {
+  margin: 0.4rem 0;
+  padding-left: 0.25rem;
+}
+
+.help-prose li::marker {
+  color: var(--color-bingo-yellow, #facc15);
+}
+
+.help-prose strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.help-faq {
+  margin: 0;
+}
+
+.help-faq dt {
+  margin: 1rem 0 0.35rem;
+  font-weight: 700;
+  color: #fef3c7;
+}
+
+.help-faq dt:first-child {
+  margin-top: 0;
+}
+
+.help-faq dd {
+  margin: 0 0 0.25rem;
+  color: #d1d5db;
+}
