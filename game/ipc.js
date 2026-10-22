@@ -12,6 +12,12 @@ const {
   toFileUrl,
 } = require('./paths');
 const { readBuildInfo } = require('./version');
+const {
+  checkForUpdates,
+  downloadUpdate,
+  quitAndInstall,
+  getUpdateStatus,
+} = require('./updater');
 const pkg = require('../package.json');
 
 const DISPLAY_MODES = new Set(['hide', 'sponsors', 'logo']);
@@ -153,10 +159,17 @@ const initializeIpc = () => {
       };
     }
     return {
-      version: buildInfo?.version || pkg.version,
+      version: pkg.version,
       builtAt: buildInfo?.builtAt ?? null,
     };
   });
+
+  ipcMain.handle('get-update-status', () => getUpdateStatus());
+  ipcMain.handle('check-for-updates', (_event, options) => (
+    checkForUpdates({ interactive: Boolean(options?.interactive) })
+  ));
+  ipcMain.handle('download-update', () => downloadUpdate());
+  ipcMain.handle('install-update', () => quitAndInstall());
 
   ipcMain.handle('get-settings', () => getSettingsForRenderer());
   ipcMain.on('save-settings', (_event, partial) => {

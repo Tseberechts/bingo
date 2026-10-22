@@ -6,12 +6,18 @@ body {
 }
 
 .setup-banner,
-.projector-tip {
+.projector-tip,
+.update-banner {
     background-color: #374151;
     border: 1px solid #4b5563;
     border-radius: 1rem;
     padding: 1.25rem 1.5rem;
     text-align: center;
+}
+
+.update-banner {
+    border-color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.12);
 }
 
 @media (max-height: 800px) {
@@ -28,17 +34,20 @@ body {
     }
 
     #setupBanner,
-    #projectorTip {
+    #projectorTip,
+    #updateBanner {
         margin-bottom: 0.75rem;
     }
 
     .setup-banner,
-    .projector-tip {
+    .projector-tip,
+    .update-banner {
         padding: 0.75rem 1rem;
     }
 
     .setup-banner p,
-    .projector-tip p {
+    .projector-tip p,
+    .update-banner p {
         margin-bottom: 0.5rem;
         font-size: 0.8125rem;
     }

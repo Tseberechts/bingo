@@ -13,13 +13,13 @@
     <header class="text-center mb-8">
         <h1 class="text-6xl font-extrabold tracking-tight text-bingo-yellow">BINGO</h1>
         <p class="text-gray-400 mt-4 max-w-md mx-auto">
-            Spiegel je laptop naar de beamer, daarna Volledig scherm.
+            Spiegel je laptop naar de beamer in spiegelmodus, daarna Volledig scherm.
         </p>
     </header>
 
     <div id="setupBanner" class="w-full max-w-md mb-6 hidden">
         <div class="setup-banner">
-            <p class="text-sm text-amber-100 mb-3">Je setup is nog niet afgerond.</p>
+            <p class="text-sm text-amber-100 mb-3">Je eerste setup is nog niet afgerond. Rond hem af om titel, logo en weergave in te stellen.</p>
             <a href="../initial-setup/index.html" id="finishSetupButton" class="menu-button bg-bingo-orange text-base py-3">Setup afronden</a>
         </div>
     </div>
@@ -27,9 +27,20 @@
     <div id="projectorTip" class="w-full max-w-md mb-6 hidden">
         <div class="projector-tip">
             <p class="text-sm text-gray-200 mb-3">
-                Tip: spiegelmodus + <strong>Volledig scherm</strong> zodat iedereen het bord ziet.
+                Tip: verbind de beamer in spiegelmodus (dupliceren), open Bingo, en tik op
+                <strong>Volledig scherm</strong> zodat iedereen het bord goed ziet.
             </p>
             <button type="button" id="dismissProjectorTip" class="menu-button-secondary text-sm">Begrepen</button>
+        </div>
+    </div>
+
+    <div id="updateBanner" class="w-full max-w-md mb-6 hidden">
+        <div class="update-banner">
+            <p id="updateBannerText" class="text-sm text-gray-200 mb-3"></p>
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button type="button" id="updateBannerAction" class="menu-button bg-bingo-green text-sm py-2 px-4">Download</button>
+                <button type="button" id="dismissUpdateBanner" class="menu-button-secondary text-sm">Later</button>
+            </div>
         </div>
     </div>
 

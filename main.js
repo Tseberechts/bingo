@@ -3,6 +3,7 @@ const path = require('path');
 const { initializeStorage, deleteAllSaves } = require('./game/storage');
 const { initializeIpc, registerWindow, unregisterWindow } = require('./game/ipc');
 const { initializeSettings, isSetupComplete, deleteSettings } = require('./game/settings');
+const { initializeUpdater, scheduleStartupCheck } = require('./game/updater');
 
 let mainWindow;
 
@@ -101,8 +102,10 @@ app.whenReady().then(() => {
   initializeStorage();
   initializeSettings();
   initializeIpc();
+  initializeUpdater();
   createWindow();
   createMenu();
+  scheduleStartupCheck();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

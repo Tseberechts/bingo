@@ -231,12 +231,91 @@ const formatBuiltAt = (iso) => {
   }).format(date);
 };
 
+const updateStatusText = document.getElementById('updateStatusText');
+const checkUpdateButton = document.getElementById('checkUpdateButton');
+const downloadUpdateButton = document.getElementById('downloadUpdateButton');
+const installUpdateButton = document.getElementById('installUpdateButton');
+
+const describeUpdateStatus = (status) => {
+  if (!status) return '—';
+  switch (status.state) {
+    case 'checking':
+      return 'Bezig met controleren…';
+    case 'available':
+      return status.version
+        ? `Update beschikbaar: v${status.version}`
+        : 'Er is een update beschikbaar.';
+    case 'not-available':
+      return 'Je hebt de nieuwste versie.';
+    case 'downloading':
+      return typeof status.progress === 'number'
+        ? `Downloaden… ${status.progress}%`
+        : 'Downloaden…';
+    case 'downloaded':
+      return status.version
+        ? `v${status.version} is gedownload. Herstart om te installeren.`
+        : 'Update is gedownload. Herstart om te installeren.';
+    case 'error':
+      return status.error || 'Updatecontrole mislukt.';
+    default:
+      return 'Nog niet gecontroleerd.';
+  }
+};
+
+const renderUpdateStatus = (status) => {
+  if (updateStatusText) {
+    updateStatusText.textContent = describeUpdateStatus(status);
+  }
+  const state = status?.state;
+  if (downloadUpdateButton) {
+    downloadUpdateButton.classList.toggle('hidden', state !== 'available');
+  }
+  if (installUpdateButton) {
+    installUpdateButton.classList.toggle('hidden', state !== 'downloaded');
+  }
+  if (checkUpdateButton) {
+    checkUpdateButton.disabled = state === 'checking' || state === 'downloading';
+  }
+};
+
 const loadAppInfo = async () => {
   const info = await api.getAppInfo();
   const versionEl = document.getElementById('appVersion');
   const builtAtEl = document.getElementById('appBuiltAt');
   if (versionEl) versionEl.textContent = info?.version || '—';
   if (builtAtEl) builtAtEl.textContent = formatBuiltAt(info?.builtAt);
+};
+
+const setupUpdates = async () => {
+  if (!api.getUpdateStatus) return;
+  renderUpdateStatus(await api.getUpdateStatus());
+  if (api.onUpdateStatus) {
+    api.onUpdateStatus(renderUpdateStatus);
+  }
+  if (checkUpdateButton) {
+    checkUpdateButton.addEventListener('click', async () => {
+      const result = await api.checkForUpdates({ interactive: true });
+      renderUpdateStatus(result?.status);
+      if (result?.status?.state === 'error') {
+        showToast(result.status.error || 'Updatecontrole mislukt', true);
+      }
+    });
+  }
+  if (downloadUpdateButton) {
+    downloadUpdateButton.addEventListener('click', async () => {
+      const result = await api.downloadUpdate();
+      renderUpdateStatus(result?.status);
+      if (!result?.ok) {
+        showToast(result?.error || 'Download mislukt', true);
+      }
+    });
+  }
+  if (installUpdateButton) {
+    installUpdateButton.addEventListener('click', async () => {
+      const result = await api.installUpdate();
+      if (!result?.ok) showToast(result?.error || 'Installeren mislukt', true);
+    });
+  }
 };
 
 window.onload = async () => {
@@ -250,4 +329,5 @@ window.onload = async () => {
   updateDisplayWarning();
   setupAutoSave();
   loadAppInfo();
+  setupUpdates();
 };

@@ -6,6 +6,10 @@ contextBridge.exposeInMainWorld('bingo', {
   toggleFullscreen: () => ipcRenderer.invoke('toggle-fullscreen'),
   getFullscreen: () => ipcRenderer.invoke('get-fullscreen'),
   getAppInfo: () => ipcRenderer.invoke('get-app-info'),
+  getUpdateStatus: () => ipcRenderer.invoke('get-update-status'),
+  checkForUpdates: (options) => ipcRenderer.invoke('check-for-updates', options),
+  downloadUpdate: () => ipcRenderer.invoke('download-update'),
+  installUpdate: () => ipcRenderer.invoke('install-update'),
 
   // Initial setup wizard
   saveSetupProgress: (payload) => ipcRenderer.invoke('save-setup-progress', payload),
@@ -43,5 +47,10 @@ contextBridge.exposeInMainWorld('bingo', {
     const listener = (_event, isFullScreen) => callback(isFullScreen);
     ipcRenderer.on('fullscreen-changed', listener);
     return () => ipcRenderer.removeListener('fullscreen-changed', listener);
+  },
+  onUpdateStatus: (callback) => {
+    const listener = (_event, status) => callback(status);
+    ipcRenderer.on('update-status', listener);
+    return () => ipcRenderer.removeListener('update-status', listener);
   },
 });

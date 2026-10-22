@@ -47,7 +47,23 @@ Release flow:
 
 1. `npm run version:suggest` — review the recommendation
 2. `npm version patch|minor|major` — bumps `package.json`, commits, and tags
-3. `git push && git push --tags` — CI builds stamped installers for `v*` tags
+3. `git push && git push --tags` — CI builds installers for `v*` tags, then creates one [GitHub Release](https://github.com/Tseberechts/bingo/releases) with all platform assets (required when release immutability is enabled)
+
+Packaged apps use the plain semver from `package.json` (e.g. `1.0.1`). Each build also records `builtAt` (and an optional build stamp) for the About tab; CI sets `SOURCE_DATE_EPOCH` from the tag commit so all platforms share one timestamp.
+
+## Downloads & auto-update
+
+Installers are on **GitHub Releases**. A packaged app checks for updates on launch (quietly) and from **Voorkeuren → Over**. Updates are never auto-installed mid-game; you download and choose **Herstart om te installeren**.
+
+Auto-update uses the NSIS installer (Windows), zip (macOS), and AppImage (Linux). Portable/`.deb`/`.dmg` remain available as manual downloads.
+
+Builds are **unsigned**:
+
+- **Windows**: SmartScreen may warn on first open; choose “More info” → “Run anyway”.
+- **macOS**: Gatekeeper may block unsigned apps; right-click → Open, or `xattr -cr` on the app.
+- Code signing / notarization can be added later for quieter installs.
+
+Local `dist` runs do **not** publish (`EB_PUBLISH` defaults to `never`). CI builds with `EB_PUBLISH=never`, then attaches every platform artifact in a single Release create (compatible with immutable releases).
 
 ## First run
 
@@ -63,24 +79,18 @@ Settings, logos, sponsors, and savegames live under the Electron **user data** f
 2. Start Bingo and press **F11** (or **View → Toggle Full Screen**) so the caller fills the display.
 3. Call numbers as usual — the projector shows the same UI.
 
-## Packaging & SmartScreen
-
-Installers are produced under `release/`. Each `dist` run stamps the packaged version as `1.0.0-YYYYMMDD.HHmm` (base from `package.json` plus local build time; CI uses `SOURCE_DATE_EPOCH` from the tag commit so all platforms share one stamp). The About tab and menu show that version and build time.
-
-Builds are **unsigned** by default:
-
-- **Windows**: SmartScreen may warn on first open; choose “More info” → “Run anyway” for trusted local/USB installs.
-- **macOS**: Gatekeeper may block unsigned apps; right-click → Open, or `xattr -cr` on the app if you distribute unsigned builds internally.
-- Add code-signing certificates later if you need silent installs.
-
 ## Architecture (short)
 
 - `main.js` — Electron main process, secure window prefs + preload
 - `preload.js` — narrow `window.bingo` IPC API (`contextIsolation`)
-- `game/` — settings, saves, IPC, pure game logic
+- `game/` — settings, saves, IPC, updater, pure game logic
 - `views/` — multi-page UI (menu, game, settings, initial setup)
 
 Board size is fixed at **90** numbers (10 columns) via `game/constants.js` for a future setting.
+
+## License & monetization
+
+ISC — free to use, fork, and redistribute. The update feed is public GitHub Releases today; the updater module (`game/updater.js`) is written so a future paid/generic HTTPS feed can replace it without a rewrite. If you later want a proprietary “Pro” product of this same codebase, change the license **before** wide adoption — ISC already grants redistribution rights forever.
 
 ## License
 

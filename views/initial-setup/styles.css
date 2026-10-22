@@ -1,9 +1,51 @@
+/* Override global overflow:hidden so the wizard can scroll on short screens */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  justify-content: safe center;
+}
+
 .wizard-card {
   background-color: #1f2937; /* gray-800 */
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   text-align: left;
+}
+
+@media (max-height: 800px) {
+  body {
+    padding: 0.75rem 1rem;
+  }
+
+  header {
+    margin-bottom: 1rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  header p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .wizard-progress {
+    margin-bottom: 1rem;
+  }
+
+  .wizard-card {
+    padding: 1rem 1.25rem;
+  }
+
+  .wizard-footer {
+    margin-top: 1rem;
+  }
+
+  .wizard-footer ~ p {
+    margin-top: 1rem;
+  }
 }
 
 .wizard-step {

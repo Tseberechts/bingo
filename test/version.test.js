@@ -2,6 +2,7 @@ const { describe, it, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const {
+  formatBuildStamp,
   stampVersion,
   resolveBuildDate,
   writeBuildInfo,
@@ -9,15 +10,22 @@ const {
   BUILD_INFO_PATH,
 } = require('../game/version');
 
-describe('stampVersion', () => {
-  it('formats base version with YYYYMMDD.HHmm in UTC', () => {
+describe('formatBuildStamp', () => {
+  it('formats YYYYMMDD.HHmm in UTC', () => {
     const date = new Date(Date.UTC(2026, 9, 22, 21, 30, 45));
-    assert.equal(stampVersion('1.0.0', date), '1.0.0-20261022.2130');
+    assert.equal(formatBuildStamp(date), '20261022.2130');
   });
 
   it('pads single-digit month, day, hour, and minute', () => {
     const date = new Date(Date.UTC(2026, 0, 5, 3, 7));
-    assert.equal(stampVersion('2.1.3', date), '2.1.3-20260105.0307');
+    assert.equal(formatBuildStamp(date), '20260105.0307');
+  });
+});
+
+describe('stampVersion', () => {
+  it('formats base version with YYYYMMDD.HHmm in UTC', () => {
+    const date = new Date(Date.UTC(2026, 9, 22, 21, 30, 45));
+    assert.equal(stampVersion('1.0.0', date), '1.0.0-20261022.2130');
   });
 });
 
@@ -71,12 +79,13 @@ describe('writeBuildInfo / readBuildInfo', () => {
     }
   });
 
-  it('writes and reads stamped version and ISO builtAt', () => {
+  it('writes package semver and ISO builtAt (not a stamped app version)', () => {
     process.env.SOURCE_DATE_EPOCH = '1729600000';
     const info = writeBuildInfo('1.0.0');
     const expectedDate = new Date(1729600000 * 1000);
-    assert.equal(info.version, stampVersion('1.0.0', expectedDate));
+    assert.equal(info.version, '1.0.0');
     assert.equal(info.builtAt, expectedDate.toISOString());
+    assert.equal(info.buildStamp, formatBuildStamp(expectedDate));
     assert.deepEqual(readBuildInfo(), info);
   });
 

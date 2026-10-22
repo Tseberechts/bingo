@@ -11,6 +11,12 @@ const closeModalButton = document.getElementById('closeModalButton');
 const setupBanner = document.getElementById('setupBanner');
 const projectorTip = document.getElementById('projectorTip');
 const dismissProjectorTip = document.getElementById('dismissProjectorTip');
+const updateBanner = document.getElementById('updateBanner');
+const updateBannerText = document.getElementById('updateBannerText');
+const updateBannerAction = document.getElementById('updateBannerAction');
+const dismissUpdateBanner = document.getElementById('dismissUpdateBanner');
+
+let updateBannerDismissed = false;
 
 newGameButton.addEventListener('click', () => {
   api.startNewGame();
@@ -143,6 +149,68 @@ if (appVersionLabel && api.getAppInfo) {
   });
 }
 
+const hideUpdateBanner = () => {
+  if (!updateBanner) return;
+  updateBanner.classList.add('hidden');
+};
+
+const showUpdateBanner = (status) => {
+  if (!updateBanner || !updateBannerText || !updateBannerAction || updateBannerDismissed) return;
+
+  if (status?.state === 'available') {
+    updateBannerText.textContent = status.version
+      ? `Update v${status.version} is beschikbaar.`
+      : 'Er is een update beschikbaar.';
+    updateBannerAction.textContent = 'Download';
+    updateBannerAction.onclick = async () => {
+      const result = await api.downloadUpdate();
+      if (!result?.ok) {
+        alert(result?.error || 'Download mislukt');
+      }
+    };
+    updateBanner.classList.remove('hidden');
+    return;
+  }
+
+  if (status?.state === 'downloading') {
+    updateBannerText.textContent = typeof status.progress === 'number'
+      ? `Update downloaden… ${status.progress}%`
+      : 'Update downloaden…';
+    updateBannerAction.textContent = 'Bezig…';
+    updateBannerAction.onclick = null;
+    updateBanner.classList.remove('hidden');
+    return;
+  }
+
+  if (status?.state === 'downloaded') {
+    updateBannerText.textContent = status.version
+      ? `v${status.version} is klaar om te installeren.`
+      : 'Update is klaar om te installeren.';
+    updateBannerAction.textContent = 'Herstart om te installeren';
+    updateBannerAction.onclick = () => {
+      api.installUpdate();
+    };
+    updateBanner.classList.remove('hidden');
+    return;
+  }
+
+  hideUpdateBanner();
+};
+
+if (dismissUpdateBanner) {
+  dismissUpdateBanner.addEventListener('click', () => {
+    updateBannerDismissed = true;
+    hideUpdateBanner();
+  });
+}
+
+if (api.onUpdateStatus) {
+  api.onUpdateStatus((status) => {
+    // Only surface quiet launch updates on the menu — never mid-game.
+    showUpdateBanner(status);
+  });
+}
+
 window.onload = async () => {
   const settings = await api.getSettings();
   if (settings.setupComplete === false) {
@@ -153,5 +221,8 @@ window.onload = async () => {
   }
   if (api.getFullscreen) {
     updateFullscreenButton(await api.getFullscreen());
+  }
+  if (api.getUpdateStatus) {
+    showUpdateBanner(await api.getUpdateStatus());
   }
 };

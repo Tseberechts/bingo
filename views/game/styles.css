@@ -1,3 +1,26 @@
+@media (max-height: 800px) {
+  body {
+    padding: 0.5rem 0.75rem;
+  }
+
+  header {
+    margin-bottom: 0.5rem;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+  }
+
+  #currentNumber {
+    font-size: clamp(4rem, 22vh, 10rem);
+  }
+
+  footer {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
 /* Number board — always fully visible, never scrolls */
 .history-panel {
   flex: 1 1 auto;

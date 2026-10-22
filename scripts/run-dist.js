@@ -5,11 +5,14 @@ const pkg = require('../package.json');
 const { writeBuildInfo } = require('../game/version');
 
 const platformArgs = process.argv.slice(2);
-const { version } = writeBuildInfo(pkg.version);
+writeBuildInfo(pkg.version);
+
+// Local builds never publish; CI sets EB_PUBLISH=always with GITHUB_TOKEN.
+const publishMode = process.env.EB_PUBLISH || 'never';
 
 const result = spawnSync(
   'npx',
-  ['electron-builder', ...platformArgs, `--config.extraMetadata.version=${version}`],
+  ['electron-builder', ...platformArgs, `--publish`, publishMode],
   {
     stdio: 'inherit',
     cwd: path.join(__dirname, '..'),

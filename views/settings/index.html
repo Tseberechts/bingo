@@ -10,8 +10,8 @@
 </head>
 <body class="bg-dark-bg min-h-screen font-sans text-white p-4 sm:p-6 lg:p-8 flex flex-col">
 
-<header class="text-center mb-8">
-  <h1 class="text-5xl font-extrabold tracking-tight text-bingo-yellow">Instellingen</h1>
+<header class="text-center mb-4">
+  <h1 class="text-4xl font-extrabold tracking-tight text-bingo-yellow">Instellingen</h1>
 </header>
 
 <main class="flex-grow flex flex-col w-full bg-gray-800 rounded-2xl shadow-2xl p-6 min-h-0">
@@ -38,7 +38,7 @@
 
     <!-- Display Settings Tab -->
     <div id="display" class="tab-content hidden">
-      <div class="flex flex-col gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- In-Game Display Settings -->
         <div class="setting-section">
           <h2 class="text-2xl font-bold mb-6">Spelscherm</h2>
@@ -48,7 +48,8 @@
               <option value="hide">Verbergen</option>
               <option value="sponsors">Sponsors</option>
               <option value="logo">Hoofdlogo</option>
-            </select></div>
+            </select>
+          </div>
         </div>
         <!-- Pause Screen Display Settings -->
         <div class="setting-section">
@@ -62,9 +63,9 @@
             </select>
           </div>
         </div>
-        <p id="displayWarning" class="field-error text-center hidden" role="status"></p>
+        <p id="displayWarning" class="field-error text-center hidden lg:col-span-2" role="status"></p>
         <!-- Main Logo Upload -->
-        <div class="setting-section">
+        <div class="setting-section lg:col-span-2">
           <h2 class="text-2xl font-bold mb-6">Hoofdlogo</h2>
           <div class="setting-item">
             <label class="text-lg">Huidig logo:</label>
@@ -91,7 +92,7 @@
     <div id="sponsors" class="tab-content hidden">
       <div class="setting-section">
         <h2 class="text-2xl font-bold mb-6">Huidige Sponsors</h2>
-        <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"></div>
+        <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8"></div>
         <h2 class="text-2xl font-bold mb-6">Nieuwe Sponsor Toevoegen</h2>
         <div class="flex flex-col gap-4">
           <div class="setting-item">
@@ -122,6 +123,21 @@
         <div class="setting-item">
           <span class="text-lg">Gemaakt op:</span>
           <span id="appBuiltAt" class="text-lg text-gray-300">—</span>
+        </div>
+        <div class="update-section mt-6 pt-6 border-t border-gray-600">
+          <h3 class="text-xl font-bold mb-3">Updates</h3>
+          <p id="updateStatusText" class="text-gray-300 mb-4" aria-live="polite">—</p>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" id="checkUpdateButton" class="menu-button bg-bingo-blue text-base py-3 px-5">
+              Controleer op updates
+            </button>
+            <button type="button" id="downloadUpdateButton" class="menu-button bg-bingo-green text-base py-3 px-5 hidden">
+              Download update
+            </button>
+            <button type="button" id="installUpdateButton" class="menu-button bg-bingo-orange text-base py-3 px-5 hidden">
+              Herstart om te installeren
+            </button>
+          </div>
         </div>
       </div>
     </div>
