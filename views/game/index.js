@@ -20,6 +20,8 @@ const gameMenuModal = document.getElementById('gameMenuModal');
 const menuResumeButton = document.getElementById('menuResumeButton');
 const menuPauseButton = document.getElementById('menuPauseButton');
 const menuReturnToMainButton = document.getElementById('menuReturnToMainButton');
+const menuAudienceButton = document.getElementById('menuAudienceButton');
+const menuExportReportButton = document.getElementById('menuExportReportButton');
 const menuEndGameButton = document.getElementById('menuEndGameButton');
 
 const pauseOverlay = document.getElementById('pauseOverlay');
@@ -273,6 +275,26 @@ menuEndGameButton.addEventListener('click', () => {
   );
 });
 
+if (menuAudienceButton) {
+  menuAudienceButton.addEventListener('click', async () => {
+    const result = await api.openAudienceWindow();
+    if (!result?.ok) showToast(result?.error || 'Publieksvenster openen mislukt');
+    else toggleMenu();
+  });
+}
+
+if (menuExportReportButton) {
+  menuExportReportButton.addEventListener('click', async () => {
+    const result = await api.exportEveningReport();
+    if (result?.cancelled) return;
+    if (!result?.ok) showToast(result?.error || 'Exporteren mislukt');
+    else {
+      showToast('Avondrapport opgeslagen');
+      toggleMenu();
+    }
+  });
+}
+
 const showConfirmDialog = (title, message, onConfirm) => {
   confirmTitle.textContent = title;
   if (message) {
@@ -345,6 +367,16 @@ document.addEventListener('keydown', (event) => {
 
 window.onload = async () => {
   api.requestInitialState();
+  const entitlements = (await api.getEntitlements()) || { isPaid: false };
   window.settings = await api.getSettings();
+  if (window.applyBrandColors && window.settings.effectiveBrandColors) {
+    window.applyBrandColors(window.settings.effectiveBrandColors);
+  }
+  if (menuAudienceButton) {
+    menuAudienceButton.classList.toggle('hidden', !entitlements.audienceWindow);
+  }
+  if (menuExportReportButton) {
+    menuExportReportButton.classList.toggle('hidden', !entitlements.eveningReport);
+  }
   setupDisplay(inGameDisplayContent, inGameDisplayTitle, window.settings, 'inGameDisplayMode');
 };

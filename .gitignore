@@ -22,6 +22,8 @@ dist/
 # Env / secrets
 .env
 .env.*
+secrets/*
+!secrets/README.md
 
 # Logs & coverage
 logs

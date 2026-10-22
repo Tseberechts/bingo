@@ -21,11 +21,32 @@ const addSponsorButton = document.getElementById('addSponsorButton');
 
 const toast = document.getElementById('toast');
 const displayWarning = document.getElementById('displayWarning');
+const freeBrandingNote = document.getElementById('freeBrandingNote');
+const freeSponsorsNote = document.getElementById('freeSponsorsNote');
+const addSponsorForm = document.getElementById('addSponsorForm');
+const brandColorsSection = document.getElementById('brandColorsSection');
+const mainLogoUploadRow = document.getElementById('mainLogoUploadRow');
+const mainLogoDeleteRow = document.getElementById('mainLogoDeleteRow');
+const brandAccentInput = document.getElementById('brandAccent');
+const brandBgInput = document.getElementById('brandBg');
+const brandBgActiveInput = document.getElementById('brandBgActive');
+const resetBrandColorsButton = document.getElementById('resetBrandColors');
+const licenseTierLabel = document.getElementById('licenseTierLabel');
+const licenseDetails = document.getElementById('licenseDetails');
+const licenseIdLine = document.getElementById('licenseIdLine');
+const licenseEmailLine = document.getElementById('licenseEmailLine');
+const licenseExpLine = document.getElementById('licenseExpLine');
+const licenseActivateForm = document.getElementById('licenseActivateForm');
+const licenseDeactivateRow = document.getElementById('licenseDeactivateRow');
+const licenseKeyInput = document.getElementById('licenseKeyInput');
+const activateLicenseButton = document.getElementById('activateLicenseButton');
+const deactivateLicenseButton = document.getElementById('deactivateLicenseButton');
 
 let currentSettings = {
   mainLogoPath: null,
   sponsors: [],
 };
+let entitlements = { isPaid: false };
 
 const showToast = (message = 'Instellingen opgeslagen!', isError = false) => {
   toast.textContent = message;
@@ -40,10 +61,10 @@ const updateDisplayWarning = () => {
   if (!displayWarning) return;
   const warnings = [];
   const modes = [inGameDisplayModeSelect.value, pauseDisplayModeSelect.value];
-  if (modes.includes('logo') && !currentSettings.mainLogoPath) {
+  if (entitlements.customMainLogo && modes.includes('logo') && !currentSettings.mainLogoPath) {
     warnings.push('Je koos “Hoofdlogo tonen”, maar er is nog geen logo geüpload.');
   }
-  if (modes.includes('sponsors') && !(currentSettings.sponsors || []).length) {
+  if (entitlements.customSponsors && modes.includes('sponsors') && !(currentSettings.sponsors || []).length) {
     warnings.push('Je koos “Sponsors tonen”, maar er zijn nog geen sponsors toegevoegd.');
   }
   if (!warnings.length) {
@@ -60,7 +81,11 @@ const updateMainLogoUI = (logoPath, fileName) => {
     mainLogoPreview.src = logoPath;
     mainLogoPreview.classList.remove('hidden');
     noLogoText.classList.add('hidden');
-    deleteMainLogoButton.classList.remove('hidden');
+    if (entitlements.customMainLogo && !currentSettings.mainLogoLocked) {
+      deleteMainLogoButton.classList.remove('hidden');
+    } else {
+      deleteMainLogoButton.classList.add('hidden');
+    }
     mainLogoLabel.textContent = fileName || 'Logo geüpload';
   } else {
     mainLogoPreview.classList.add('hidden');
@@ -69,6 +94,66 @@ const updateMainLogoUI = (logoPath, fileName) => {
     mainLogoInput.value = '';
     mainLogoLabel.textContent = 'Kies bestand...';
   }
+};
+
+const applyEntitlementUi = () => {
+  const paid = Boolean(entitlements.isPaid);
+  if (freeBrandingNote) freeBrandingNote.classList.toggle('hidden', paid);
+  if (freeSponsorsNote) freeSponsorsNote.classList.toggle('hidden', paid);
+  if (addSponsorForm) addSponsorForm.classList.toggle('hidden', !paid);
+  if (brandColorsSection) brandColorsSection.classList.toggle('hidden', !paid);
+  if (mainLogoUploadRow) mainLogoUploadRow.classList.toggle('hidden', !paid);
+  if (mainLogoDeleteRow) mainLogoDeleteRow.classList.toggle('hidden', !paid);
+};
+
+const renderLicenseStatus = (status) => {
+  const paid = Boolean(status?.isPaid);
+  if (licenseTierLabel) {
+    licenseTierLabel.textContent = paid ? 'Betaald' : 'Gratis';
+  }
+  if (licenseDetails) {
+    licenseDetails.classList.toggle('hidden', !paid);
+  }
+  if (paid) {
+    if (licenseIdLine) licenseIdLine.textContent = status.lic ? `Licentie: ${status.lic}` : '';
+    if (licenseEmailLine) {
+      licenseEmailLine.textContent = status.email ? `E-mail: ${status.email}` : '';
+      licenseEmailLine.classList.toggle('hidden', !status.email);
+    }
+    if (licenseExpLine) {
+      if (status.exp) {
+        const expDate = new Date(status.exp * 1000);
+        licenseExpLine.textContent = `Geldig tot: ${expDate.toLocaleDateString('nl-BE')}`;
+        licenseExpLine.classList.remove('hidden');
+      } else {
+        licenseExpLine.textContent = 'Geldig tot: onbeperkt';
+        licenseExpLine.classList.remove('hidden');
+      }
+    }
+  }
+  if (licenseActivateForm) licenseActivateForm.classList.toggle('hidden', paid);
+  if (licenseDeactivateRow) licenseDeactivateRow.classList.toggle('hidden', !paid);
+};
+
+const syncBrandColorInputs = (colors) => {
+  const c = colors || { accent: '#f39c12', bg: '#1f2937', bgActive: '#4a4e69' };
+  if (brandAccentInput) brandAccentInput.value = c.accent || '#f39c12';
+  if (brandBgInput) brandBgInput.value = c.bg || '#1f2937';
+  if (brandBgActiveInput) brandBgActiveInput.value = c.bgActive || '#4a4e69';
+};
+
+const saveBrandColorsFromInputs = () => {
+  if (!entitlements.customBrandColors) return;
+  const brandColors = {
+    accent: brandAccentInput.value,
+    bg: brandBgInput.value,
+    bgActive: brandBgActiveInput.value,
+  };
+  api.saveSettings({ brandColors });
+  currentSettings.brandColors = brandColors;
+  currentSettings.effectiveBrandColors = brandColors;
+  if (window.applyBrandColors) window.applyBrandColors(brandColors);
+  showToast('Merkkleuren opgeslagen');
 };
 
 const saveSetting = (key, value) => {
@@ -166,16 +251,19 @@ const renderSponsors = (sponsors) => {
     name.className = 'name';
     name.textContent = sponsor.name;
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.type = 'button';
-    deleteBtn.className = 'delete-sponsor-btn';
-    deleteBtn.dataset.id = String(sponsor.id);
-    deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
-    deleteBtn.textContent = '×';
-
     sponsorEl.appendChild(img);
     sponsorEl.appendChild(name);
-    sponsorEl.appendChild(deleteBtn);
+
+    if (entitlements.customSponsors && !sponsor.locked) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'delete-sponsor-btn';
+      deleteBtn.dataset.id = String(sponsor.id);
+      deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
+      deleteBtn.textContent = '×';
+      sponsorEl.appendChild(deleteBtn);
+    }
+
     sponsorList.appendChild(sponsorEl);
   });
 };
@@ -338,14 +426,86 @@ const setupUpdates = async () => {
   }
 };
 
+if (brandAccentInput) {
+  brandAccentInput.addEventListener('change', saveBrandColorsFromInputs);
+  brandBgInput.addEventListener('change', saveBrandColorsFromInputs);
+  brandBgActiveInput.addEventListener('change', saveBrandColorsFromInputs);
+}
+
+if (resetBrandColorsButton) {
+  resetBrandColorsButton.addEventListener('click', () => {
+    if (!entitlements.customBrandColors) return;
+    api.saveSettings({ brandColors: null });
+    currentSettings.brandColors = null;
+    const defaults = { accent: '#f39c12', bg: '#1f2937', bgActive: '#4a4e69' };
+    currentSettings.effectiveBrandColors = defaults;
+    syncBrandColorInputs(defaults);
+    if (window.applyBrandColors) window.applyBrandColors(defaults);
+    showToast('Standaardkleuren hersteld');
+  });
+}
+
+if (activateLicenseButton) {
+  activateLicenseButton.addEventListener('click', async () => {
+    const key = licenseKeyInput?.value?.trim();
+    if (!key) {
+      showToast('Plak eerst een licentiesleutel', true);
+      return;
+    }
+    const result = await api.activateLicense(key);
+    if (!result?.ok) {
+      showToast(result?.error || 'Activeren mislukt', true);
+      return;
+    }
+    entitlements = await api.getEntitlements();
+    renderLicenseStatus(result.status || entitlements.license);
+    applyEntitlementUi();
+    const settings = await api.getSettings();
+    currentSettings = settings;
+    updateMainLogoUI(settings.mainLogoPath, settings.mainLogoFileName);
+    renderSponsors(settings.sponsors);
+    syncBrandColorInputs(settings.effectiveBrandColors);
+    if (window.applyBrandColors) window.applyBrandColors(settings.effectiveBrandColors);
+    if (licenseKeyInput) licenseKeyInput.value = '';
+    showToast('Licentie geactiveerd');
+  });
+}
+
+if (deactivateLicenseButton) {
+  deactivateLicenseButton.addEventListener('click', async () => {
+    const confirmed = confirm('Licentie deactiveren? Je keert terug naar de gratis versie met Arkastro-branding.');
+    if (!confirmed) return;
+    const result = await api.deactivateLicense();
+    if (!result?.ok) {
+      showToast(result?.error || 'Deactiveren mislukt', true);
+      return;
+    }
+    entitlements = await api.getEntitlements();
+    renderLicenseStatus(result.status || entitlements.license);
+    applyEntitlementUi();
+    const settings = await api.getSettings();
+    currentSettings = settings;
+    updateMainLogoUI(settings.mainLogoPath, settings.mainLogoFileName);
+    renderSponsors(settings.sponsors);
+    syncBrandColorInputs(settings.effectiveBrandColors);
+    if (window.applyBrandColors) window.applyBrandColors(settings.effectiveBrandColors);
+    showToast('Terug op gratis versie');
+  });
+}
+
 window.onload = async () => {
+  entitlements = (await api.getEntitlements()) || { isPaid: false };
   const settings = await api.getSettings();
   currentSettings = settings;
   gameTitleInput.value = settings.gameTitle || 'BINGO';
   inGameDisplayModeSelect.value = settings.inGameDisplayMode;
   pauseDisplayModeSelect.value = settings.pauseDisplayMode;
+  applyEntitlementUi();
   updateMainLogoUI(settings.mainLogoPath, settings.mainLogoFileName);
   renderSponsors(settings.sponsors);
+  syncBrandColorInputs(settings.effectiveBrandColors);
+  if (window.applyBrandColors) window.applyBrandColors(settings.effectiveBrandColors);
+  renderLicenseStatus(entitlements.license || { isPaid: entitlements.isPaid });
   updateDisplayWarning();
   setupAutoSave();
   loadAppInfo();

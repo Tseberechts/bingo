@@ -16,10 +16,11 @@
 
 <main class="flex-grow flex flex-col w-full bg-gray-800 rounded-2xl shadow-2xl p-6 min-h-0">
   <!-- Tab Navigation -->
-  <div class="flex border-b border-gray-700 mb-6">
+  <div class="flex border-b border-gray-700 mb-6 flex-wrap">
     <button class="tab-button active" data-tab="main">Algemeen</button>
     <button class="tab-button" data-tab="display">Weergave</button>
     <button class="tab-button" data-tab="sponsors">Sponsors</button>
+    <button class="tab-button" data-tab="license">Licentie</button>
     <button class="tab-button" data-tab="about">Over</button>
   </div>
 
@@ -67,8 +68,11 @@
           </div>
         </div>
         <p id="displayWarning" class="field-error text-center hidden lg:col-span-2" role="status"></p>
+        <p id="freeBrandingNote" class="text-amber-200/90 text-sm lg:col-span-2 hidden" role="status">
+          Gratis versie — Arkastro-branding is verplicht. Activeer een licentie om een eigen logo en kleuren te gebruiken.
+        </p>
         <!-- Main Logo Upload -->
-        <div class="setting-section lg:col-span-2">
+        <div class="setting-section lg:col-span-2" id="mainLogoSection">
           <h2 class="text-2xl font-bold mb-2">Hoofdlogo</h2>
           <p class="text-gray-400 mb-6">Dit logo verschijnt als je bij Spelscherm of Pauzescherm “Hoofdlogo tonen” kiest.</p>
           <div class="setting-item">
@@ -78,17 +82,40 @@
               <span id="noLogoText" class="text-gray-400">Geen logo ingesteld.</span>
             </div>
           </div>
-          <div class="setting-item">
+          <div class="setting-item" id="mainLogoUploadRow">
             <label for="mainLogo" class="text-lg">Upload nieuw logo:</label>
             <div class="file-input-container">
               <input type="file" id="mainLogo" class="hidden" accept="image/*">
               <label for="mainLogo" class="file-input-label form-input">Kies bestand...</label>
             </div>
           </div>
-          <div class="setting-item justify-end">
+          <div class="setting-item justify-end" id="mainLogoDeleteRow">
             <button id="deleteMainLogo" class="menu-button bg-bingo-red text-sm py-2 px-4">
               <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               <span class="btn-label">Verwijder logo</span>
+            </button>
+          </div>
+        </div>
+        <div class="setting-section lg:col-span-2 hidden" id="brandColorsSection">
+          <h2 class="text-2xl font-bold mb-2">Merkkleuren</h2>
+          <p class="text-gray-400 mb-6">Pas accent- en achtergrondkleuren aan (betaalde versie).</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="setting-item flex-col items-start gap-2">
+              <label for="brandAccent" class="text-lg">Accent</label>
+              <input type="color" id="brandAccent" class="brand-color-input" value="#f39c12">
+            </div>
+            <div class="setting-item flex-col items-start gap-2">
+              <label for="brandBg" class="text-lg">Achtergrond</label>
+              <input type="color" id="brandBg" class="brand-color-input" value="#1f2937">
+            </div>
+            <div class="setting-item flex-col items-start gap-2">
+              <label for="brandBgActive" class="text-lg">Actief paneel</label>
+              <input type="color" id="brandBgActive" class="brand-color-input" value="#4a4e69">
+            </div>
+          </div>
+          <div class="setting-item justify-end mt-4">
+            <button type="button" id="resetBrandColors" class="menu-button-secondary text-sm py-2 px-4">
+              <span class="btn-label">Standaardkleuren</span>
             </button>
           </div>
         </div>
@@ -100,24 +127,60 @@
       <div class="setting-section">
         <h2 class="text-2xl font-bold mb-2">Huidige Sponsors</h2>
         <p class="text-gray-400 mb-6">Sponsors verschijnen als je bij Weergave “Sponsors tonen” kiest.</p>
+        <p id="freeSponsorsNote" class="text-amber-200/90 text-sm mb-4 hidden" role="status">
+          Gratis versie — alleen Arkastro-sponsoring. Eigen sponsors vereisen een licentie.
+        </p>
         <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8"></div>
-        <h2 class="text-2xl font-bold mb-6">Nieuwe Sponsor Toevoegen</h2>
-        <div class="flex flex-col gap-4">
-          <div class="setting-item">
-            <label for="sponsorName" class="text-lg">Naam:</label>
-            <input type="text" id="sponsorName" class="form-input">
-          </div>
-          <div class="setting-item">
-            <label class="text-lg">Logo:</label>
-            <div class="file-input-container">
-              <input type="file" id="sponsorLogo" class="hidden" accept="image/*">
-              <label for="sponsorLogo" class="file-input-label form-input">Kies bestand...</label>
-              <img id="sponsorLogoPreview" class="logo-preview hidden" src="" alt="Logo Preview">
+        <div id="addSponsorForm">
+          <h2 class="text-2xl font-bold mb-6">Nieuwe Sponsor Toevoegen</h2>
+          <div class="flex flex-col gap-4">
+            <div class="setting-item">
+              <label for="sponsorName" class="text-lg">Naam:</label>
+              <input type="text" id="sponsorName" class="form-input">
             </div>
+            <div class="setting-item">
+              <label class="text-lg">Logo:</label>
+              <div class="file-input-container">
+                <input type="file" id="sponsorLogo" class="hidden" accept="image/*">
+                <label for="sponsorLogo" class="file-input-label form-input">Kies bestand...</label>
+                <img id="sponsorLogoPreview" class="logo-preview hidden" src="" alt="Logo Preview">
+              </div>
+            </div>
+            <button id="addSponsorButton" class="menu-button bg-bingo-blue self-end">
+              <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span class="btn-label">Toevoegen</span>
+            </button>
           </div>
-          <button id="addSponsorButton" class="menu-button bg-bingo-blue self-end">
-            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            <span class="btn-label">Toevoegen</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- License Tab -->
+    <div id="license" class="tab-content hidden">
+      <div class="setting-section">
+        <h2 class="text-2xl font-bold mb-2">Licentie</h2>
+        <p class="text-gray-400 mb-6">Plak je betaalde licentiesleutel om eigen branding, meerdere opslagen, avondrapport en een publieksvenster te ontgrendelen.</p>
+        <div class="setting-item">
+          <span class="text-lg">Status:</span>
+          <span id="licenseTierLabel" class="text-lg text-bingo-yellow font-semibold">Gratis</span>
+        </div>
+        <div id="licenseDetails" class="text-gray-300 text-sm space-y-1 mb-6 hidden">
+          <p id="licenseIdLine"></p>
+          <p id="licenseEmailLine"></p>
+          <p id="licenseExpLine"></p>
+        </div>
+        <div id="licenseActivateForm" class="flex flex-col gap-4">
+          <div class="setting-item flex-col items-stretch gap-2">
+            <label for="licenseKeyInput" class="text-lg">Licentiesleutel:</label>
+            <textarea id="licenseKeyInput" class="form-input font-mono text-sm min-h-[6rem]" placeholder="plak hier je sleutel…" spellcheck="false"></textarea>
+          </div>
+          <button type="button" id="activateLicenseButton" class="menu-button bg-bingo-green self-end">
+            <span class="btn-label">Activeren</span>
+          </button>
+        </div>
+        <div id="licenseDeactivateRow" class="hidden mt-4">
+          <button type="button" id="deactivateLicenseButton" class="menu-button bg-bingo-red text-sm py-2 px-4">
+            <span class="btn-label">Licentie deactiveren</span>
           </button>
         </div>
       </div>
@@ -177,6 +240,7 @@
   Instellingen opgeslagen!
 </div>
 
+<script src="../shared/apply-brand-colors.js"></script>
 <script src="index.js"></script>
 </body>
 </html>

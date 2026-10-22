@@ -27,6 +27,14 @@ contextBridge.exposeInMainWorld('bingo', {
   uploadMainLogo: (payload) => ipcRenderer.invoke('upload-main-logo', payload),
   deleteMainLogo: () => ipcRenderer.invoke('delete-main-logo'),
 
+  // License / entitlements
+  getLicenseStatus: () => ipcRenderer.invoke('get-license-status'),
+  getEntitlements: () => ipcRenderer.invoke('get-entitlements'),
+  activateLicense: (key) => ipcRenderer.invoke('activate-license', key),
+  deactivateLicense: () => ipcRenderer.invoke('deactivate-license'),
+  exportEveningReport: (payload) => ipcRenderer.invoke('export-evening-report', payload),
+  openAudienceWindow: () => ipcRenderer.invoke('open-audience-window'),
+
   // Games
   startNewGame: () => ipcRenderer.send('start-new-game'),
   loadGame: (fileName) => ipcRenderer.send('load-game', fileName),

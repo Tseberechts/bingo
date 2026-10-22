@@ -1,11 +1,56 @@
 const { app, BrowserWindow, Menu, shell, dialog } = require('electron');
 const path = require('path');
-const { initializeStorage, deleteAllSaves } = require('./game/storage');
-const { initializeIpc, registerWindow, unregisterWindow } = require('./game/ipc');
+const { initializeStorage, deleteAllSaves, enforceSingleSaveSlot } = require('./game/storage');
+const {
+  initializeIpc,
+  registerWindow,
+  unregisterWindow,
+  setAudienceWindowFactory,
+} = require('./game/ipc');
 const { initializeSettings, isSetupComplete, isEulaAccepted, deleteSettings } = require('./game/settings');
+const { initializeLicense, isPaid, deactivateLicense } = require('./game/license');
 const { initializeUpdater, scheduleStartupCheck } = require('./game/updater');
 
 let mainWindow;
+let audienceWindow = null;
+
+const windowPrefs = () => ({
+  webPreferences: {
+    preload: path.join(__dirname, 'preload.js'),
+    contextIsolation: true,
+    nodeIntegration: false,
+    sandbox: true,
+  },
+});
+
+function createAudienceWindow(existing) {
+  if (existing && !existing.isDestroyed()) {
+    existing.focus();
+    return existing;
+  }
+
+  audienceWindow = new BrowserWindow({
+    width: 1280,
+    height: 720,
+    show: false,
+    title: 'Bingo — Publiek',
+    icon: path.join(__dirname, 'build', 'icon.png'),
+    ...windowPrefs(),
+  });
+
+  audienceWindow.loadFile(path.join(__dirname, 'views/audience/index.html'));
+  audienceWindow.once('ready-to-show', () => {
+    audienceWindow.show();
+  });
+
+  registerWindow(audienceWindow);
+  audienceWindow.on('closed', () => {
+    unregisterWindow(audienceWindow);
+    audienceWindow = null;
+  });
+
+  return audienceWindow;
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -13,12 +58,7 @@ function createWindow() {
     height: 1080,
     show: false,
     icon: path.join(__dirname, 'build', 'icon.png'),
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: true,
-    },
+    ...windowPrefs(),
   });
 
   if (!isEulaAccepted()) {
@@ -48,6 +88,22 @@ function createMenu() {
     {
       label: 'Bestand',
       submenu: [
+        {
+          label: 'Avondrapport exporteren…',
+          click: async () => {
+            if (!isPaid()) {
+              dialog.showMessageBox(mainWindow || undefined, {
+                type: 'info',
+                title: 'Betaalde functie',
+                message: 'Avondrapport exporteren vereist een betaalde licentie (Voorkeuren → Licentie).',
+              });
+              return;
+            }
+            const { exportEveningReport } = require('./game/evening-report');
+            await exportEveningReport({ parentWindow: mainWindow });
+          },
+        },
+        { type: 'separator' },
         { label: 'Afsluiten', accelerator: 'CmdOrCtrl+Q', click: () => app.quit() },
       ],
     },
@@ -55,6 +111,20 @@ function createMenu() {
       label: 'Beeld',
       submenu: [
         { role: 'togglefullscreen', label: 'Volledig scherm' },
+        {
+          label: 'Venster voor publiek',
+          click: () => {
+            if (!isPaid()) {
+              dialog.showMessageBox(mainWindow || undefined, {
+                type: 'info',
+                title: 'Betaalde functie',
+                message: 'Het publieksvenster vereist een betaalde licentie (Voorkeuren → Licentie).',
+              });
+              return;
+            }
+            audienceWindow = createAudienceWindow(audienceWindow);
+          },
+        },
         { type: 'separator' },
         { role: 'reload', label: 'Vernieuwen' },
         { role: 'forceReload', label: 'Hard vernieuwen' },
@@ -91,6 +161,7 @@ function createMenu() {
             if (response !== 1) return;
             deleteAllSaves();
             deleteSettings();
+            deactivateLicense();
             app.relaunch();
             app.quit();
           },
@@ -106,6 +177,11 @@ function createMenu() {
 app.whenReady().then(() => {
   initializeStorage();
   initializeSettings();
+  initializeLicense();
+  if (!isPaid()) {
+    enforceSingleSaveSlot();
+  }
+  setAudienceWindowFactory(createAudienceWindow);
   initializeIpc();
   initializeUpdater();
   createWindow();

@@ -4,6 +4,14 @@ const { app } = require('electron');
 const { toFileUrl } = require('./paths');
 const { defaultSettings, mergeSettings } = require('./settings-defaults');
 const { getCurrentEulaHash } = require('./eula');
+const { isPaid } = require('./license');
+const {
+  getArkastroBrandPath,
+  getArkastroBrandFileUrl,
+  lockedArkastroSponsorForRenderer,
+  DEFAULT_BRAND_COLORS,
+  normalizeBrandColors,
+} = require('./branding');
 
 let settingsPath;
 let settings = {};
@@ -82,17 +90,38 @@ const isEulaAccepted = () => {
   }
 };
 
-/** Settings shaped for the renderer (file URLs for images). */
+/** Settings shaped for the renderer (file URLs for images). Free tier forces Arkastro branding. */
 const getSettingsForRenderer = () => {
   const current = getSettings();
+  const paid = isPaid();
+
+  if (!paid) {
+    const brandUrl = getArkastroBrandFileUrl();
+    return {
+      ...current,
+      mainLogoPath: brandUrl,
+      mainLogoFileName: path.basename(getArkastroBrandPath()),
+      mainLogoLocked: true,
+      sponsors: [lockedArkastroSponsorForRenderer()],
+      brandColors: null,
+      effectiveBrandColors: { ...DEFAULT_BRAND_COLORS },
+      freeTier: true,
+    };
+  }
+
+  const brandColors = normalizeBrandColors(current.brandColors);
   return {
     ...current,
     mainLogoPath: toFileUrl(current.mainLogoPath) || current.mainLogoPath,
     mainLogoFileName: current.mainLogoPath ? path.basename(current.mainLogoPath) : null,
+    mainLogoLocked: false,
     sponsors: (current.sponsors || []).map((sponsor) => ({
       ...sponsor,
       logo: toFileUrl(sponsor.logo) || sponsor.logo,
     })),
+    brandColors,
+    effectiveBrandColors: brandColors || { ...DEFAULT_BRAND_COLORS },
+    freeTier: false,
   };
 };
 

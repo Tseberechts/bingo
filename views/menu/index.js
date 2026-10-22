@@ -3,6 +3,9 @@ const api = window.bingo;
 const newGameButton = document.getElementById('newGameButton');
 const resumeGameButton = document.getElementById('resumeGameButton');
 const loadGameButton = document.getElementById('loadGameButton');
+const audienceWindowButton = document.getElementById('audienceWindowButton');
+const exportReportButton = document.getElementById('exportReportButton');
+const freeTierHint = document.getElementById('freeTierHint');
 const fullscreenButton = document.getElementById('fullscreenButton');
 const exitButton = document.getElementById('exitButton');
 const loadGameModal = document.getElementById('loadGameModal');
@@ -225,13 +228,47 @@ if (api.onUpdateStatus) {
   });
 }
 
+if (audienceWindowButton) {
+  audienceWindowButton.addEventListener('click', async () => {
+    const result = await api.openAudienceWindow();
+    if (!result?.ok) {
+      alert(result?.error || 'Publieksvenster openen mislukt');
+    }
+  });
+}
+
+if (exportReportButton) {
+  exportReportButton.addEventListener('click', async () => {
+    const result = await api.exportEveningReport();
+    if (result?.cancelled) return;
+    if (!result?.ok) {
+      alert(result?.error || 'Exporteren mislukt');
+      return;
+    }
+    alert('Avondrapport opgeslagen.');
+  });
+}
+
 window.onload = async () => {
+  const entitlements = (await api.getEntitlements()) || { isPaid: false };
   const settings = await api.getSettings();
+  if (window.applyBrandColors && settings.effectiveBrandColors) {
+    window.applyBrandColors(settings.effectiveBrandColors);
+  }
   if (settings.setupComplete === false) {
     setupBanner.classList.remove('hidden');
   }
   if (!settings.projectorTipSeen) {
     projectorTip.classList.remove('hidden');
+  }
+  const paid = Boolean(entitlements.isPaid);
+  if (loadGameButton) loadGameButton.classList.toggle('hidden', !paid);
+  if (audienceWindowButton) audienceWindowButton.classList.toggle('hidden', !paid);
+  if (exportReportButton) exportReportButton.classList.toggle('hidden', !paid);
+  if (freeTierHint) freeTierHint.classList.toggle('hidden', paid);
+  // Free tier: projector tip stays relevant; paid can use dedicated audience window.
+  if (paid && projectorTip && !projectorTip.classList.contains('hidden')) {
+    // Keep tip available until dismissed — dual display still useful.
   }
   if (api.getFullscreen) {
     updateFullscreenButton(await api.getFullscreen());

@@ -2,7 +2,15 @@ const { ipcMain, BrowserWindow, app } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { gameState, resetState } = require('./state');
-const { saveState, loadState, deleteSaveFile, listSaveGames, getLastSave } = require('./storage');
+const {
+  saveState,
+  loadState,
+  deleteSaveFile,
+  listSaveGames,
+  getLastSave,
+  pruneSavesExcept,
+  enforceSingleSaveSlot,
+} = require('./storage');
 const {
   getSettings,
   getSettingsForRenderer,
@@ -26,6 +34,15 @@ const {
   quitAndInstall,
   getUpdateStatus,
 } = require('./updater');
+const {
+  activateLicense,
+  deactivateLicense,
+  getLicenseStatus,
+  isPaid,
+} = require('./license');
+const { getEntitlements, requirePaid } = require('./entitlements');
+const { ARKASTRO_SPONSOR_ID, normalizeBrandColors } = require('./branding');
+const { exportEveningReport } = require('./evening-report');
 const pkg = require('../package.json');
 
 const DISPLAY_MODES = new Set(['hide', 'sponsors', 'logo']);
@@ -33,6 +50,12 @@ const SETUP_STEP_COUNT = 5;
 
 let allWindows = [];
 let activeGameFile = null;
+let audienceWindow = null;
+let createAudienceWindowFn = null;
+
+const setAudienceWindowFactory = (fn) => {
+  createAudienceWindowFn = fn;
+};
 
 const loadMenu = (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
@@ -215,6 +238,15 @@ const initializeIpc = () => {
   ipcMain.handle('download-update', () => downloadUpdate());
   ipcMain.handle('install-update', () => quitAndInstall());
 
+  ipcMain.handle('get-license-status', () => getLicenseStatus());
+  ipcMain.handle('get-entitlements', () => getEntitlements());
+  ipcMain.handle('activate-license', (_event, rawKey) => activateLicense(rawKey));
+  ipcMain.handle('deactivate-license', () => {
+    const result = deactivateLicense();
+    if (result.ok) enforceSingleSaveSlot();
+    return result;
+  });
+
   ipcMain.handle('get-settings', () => getSettingsForRenderer());
   ipcMain.on('save-settings', (_event, partial) => {
     if (!partial || typeof partial !== 'object') return;
@@ -237,10 +269,17 @@ const initializeIpc = () => {
     if (typeof partial.projectorTipSeen === 'boolean') {
       allowed.projectorTipSeen = partial.projectorTipSeen;
     }
+    if (Object.prototype.hasOwnProperty.call(partial, 'brandColors')) {
+      if (!isPaid()) return;
+      allowed.brandColors = normalizeBrandColors(partial.brandColors);
+    }
     if (Object.keys(allowed).length) saveSettings(allowed);
   });
 
   ipcMain.handle('add-sponsor', async (_event, { name, buffer, originalName }) => {
+    const gate = requirePaid('customSponsors');
+    if (!gate.ok) return gate;
+
     const trimmedName = typeof name === 'string' ? name.trim() : '';
     if (!trimmedName) return { ok: false, error: 'Naam is verplicht' };
 
@@ -272,7 +311,13 @@ const initializeIpc = () => {
   });
 
   ipcMain.handle('delete-sponsor', (_event, sponsorId) => {
+    const gate = requirePaid('customSponsors');
+    if (!gate.ok) return gate;
+
     const settings = getSettings();
+    if (String(sponsorId) === ARKASTRO_SPONSOR_ID) {
+      return { ok: false, error: 'Deze sponsor kan niet verwijderd worden' };
+    }
     const id = Number(sponsorId);
     const sponsorToDelete = settings.sponsors.find((s) => s.id === id);
     if (sponsorToDelete && fs.existsSync(sponsorToDelete.logo)) {
@@ -284,6 +329,9 @@ const initializeIpc = () => {
   });
 
   ipcMain.handle('upload-main-logo', async (_event, { buffer, originalName }) => {
+    const gate = requirePaid('customMainLogo');
+    if (!gate.ok) return gate;
+
     const fileBuffer = bufferFromPayload(buffer);
     const safeImageName = sanitizeImageFileName(originalName);
     if (!safeImageName || !isAllowedImageBuffer(fileBuffer)) {
@@ -315,6 +363,9 @@ const initializeIpc = () => {
   });
 
   ipcMain.handle('delete-main-logo', () => {
+    const gate = requirePaid('customMainLogo');
+    if (!gate.ok) return gate;
+
     const settings = getSettings();
     if (settings.mainLogoPath && fs.existsSync(settings.mainLogoPath)) {
       fs.unlinkSync(settings.mainLogoPath);
@@ -324,15 +375,42 @@ const initializeIpc = () => {
     return { ok: true };
   });
 
+  ipcMain.handle('export-evening-report', async (event, payload) => {
+    const gate = requirePaid('eveningReport');
+    if (!gate.ok) return gate;
+    const win = BrowserWindow.fromWebContents(event.sender);
+    return exportEveningReport({
+      fileName: payload?.fileName || null,
+      parentWindow: win,
+    });
+  });
+
+  ipcMain.handle('open-audience-window', () => {
+    const gate = requirePaid('audienceWindow');
+    if (!gate.ok) return gate;
+    if (typeof createAudienceWindowFn !== 'function') {
+      return { ok: false, error: 'Publieksvenster niet beschikbaar' };
+    }
+    audienceWindow = createAudienceWindowFn(audienceWindow);
+    return { ok: true };
+  });
+
   ipcMain.on('start-new-game', () => {
     resetState();
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     activeGameFile = `game-${timestamp}.json`;
+    if (!isPaid()) {
+      pruneSavesExcept(null);
+    }
     saveState(activeGameFile);
+    if (!isPaid()) {
+      pruneSavesExcept(activeGameFile);
+    }
     broadcastUpdate();
   });
 
   ipcMain.on('load-game', (_event, fileName) => {
+    if (!isPaid()) return;
     if (loadState(fileName)) activeGameFile = fileName;
     else {
       resetState();
@@ -351,7 +429,15 @@ const initializeIpc = () => {
     return { ok: false, error: 'Geen recent spel gevonden' };
   });
 
-  ipcMain.handle('list-save-games', () => listSaveGames());
+  ipcMain.handle('list-save-games', () => {
+    if (!isPaid()) {
+      const last = getLastSave();
+      const all = listSaveGames();
+      if (!last) return all.slice(0, 1);
+      return all.filter((s) => s.fileName === last);
+    }
+    return listSaveGames();
+  });
 
   ipcMain.handle('delete-save-game', (_event, fileName) => deleteSaveFile(fileName));
 
@@ -397,4 +483,6 @@ module.exports = {
   initializeIpc,
   registerWindow,
   unregisterWindow,
+  setAudienceWindowFactory,
+  broadcastUpdate,
 };

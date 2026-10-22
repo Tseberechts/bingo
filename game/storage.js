@@ -144,6 +144,33 @@ const getLastSave = () => {
   return null;
 };
 
+/**
+ * Keep only `keepFileName` (and delete every other save). Used by free tier (1 slot).
+ */
+const pruneSavesExcept = (keepFileName) => {
+  if (!savesDir || !fs.existsSync(savesDir)) return { ok: true, deleted: [] };
+  const keep = sanitizeSaveFileName(keepFileName);
+  const deleted = [];
+  for (const file of fs.readdirSync(savesDir)) {
+    if (!sanitizeSaveFileName(file)) continue;
+    if (keep && file === keep) continue;
+    const result = deleteSaveFile(file);
+    if (result.ok) deleted.push(file);
+  }
+  return { ok: true, deleted };
+};
+
+/** Enforce free-tier single-slot: keep last save only, or newest if last pointer missing. */
+const enforceSingleSaveSlot = () => {
+  const saves = listSaveGames();
+  if (saves.length <= 1) return { ok: true, deleted: [] };
+  const last = getLastSave();
+  const keep = last && saves.some((s) => s.fileName === last)
+    ? last
+    : saves[0]?.fileName;
+  return pruneSavesExcept(keep);
+};
+
 module.exports = {
   initializeStorage,
   saveState,
@@ -153,4 +180,7 @@ module.exports = {
   listSaveGames,
   getLastSave,
   sanitizeSaveFileName,
+  resolveSavePath,
+  pruneSavesExcept,
+  enforceSingleSaveSlot,
 };

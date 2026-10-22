@@ -44,6 +44,9 @@
       <section class="wizard-step hidden" data-step="1">
         <h2 class="text-2xl font-bold mb-2">Hoofdlogo</h2>
         <p class="text-gray-400 mb-6">Optioneel. Dit logo verschijnt als je bij Weergave “Hoofdlogo tonen” kiest. Je kunt dit later nog toevoegen of wijzigen.</p>
+        <p id="freeLogoNote" class="text-amber-200/90 text-sm mb-4 hidden" role="status">
+          Gratis versie — het Arkastro-logo is verplicht. Activeer later een licentie onder Voorkeuren → Licentie voor een eigen logo.
+        </p>
         <div class="setting-item">
           <label class="text-lg">Huidig logo:</label>
           <div class="logo-container">
@@ -51,18 +54,20 @@
             <span id="noLogoText" class="text-gray-400">Geen logo ingesteld.</span>
           </div>
         </div>
-        <div class="setting-item">
-          <label for="mainLogo" class="text-lg">Upload logo:</label>
-          <div class="file-input-container">
-            <input type="file" id="mainLogo" class="hidden" accept="image/*">
-            <label for="mainLogo" id="mainLogoLabel" class="file-input-label form-input">Kies bestand...</label>
+        <div id="logoUploadControls">
+          <div class="setting-item">
+            <label for="mainLogo" class="text-lg">Upload logo:</label>
+            <div class="file-input-container">
+              <input type="file" id="mainLogo" class="hidden" accept="image/*">
+              <label for="mainLogo" id="mainLogoLabel" class="file-input-label form-input">Kies bestand...</label>
+            </div>
           </div>
-        </div>
-        <div class="setting-item justify-end">
-          <button type="button" id="deleteMainLogo" class="menu-button bg-bingo-red text-sm py-2 px-4 hidden">
-            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            <span class="btn-label">Verwijder logo</span>
-          </button>
+          <div class="setting-item justify-end">
+            <button type="button" id="deleteMainLogo" class="menu-button bg-bingo-red text-sm py-2 px-4 hidden">
+              <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span class="btn-label">Verwijder logo</span>
+            </button>
+          </div>
         </div>
         <p id="logoError" class="field-error hidden" role="alert"></p>
       </section>
@@ -94,25 +99,30 @@
       <section class="wizard-step hidden" data-step="3">
         <h2 class="text-2xl font-bold mb-2">Sponsors</h2>
         <p class="text-gray-400 mb-6">Optioneel. Sponsors zijn zichtbaar als je bij Weergave “Sponsors tonen” koos (of dat later in Voorkeuren instelt).</p>
+        <p id="freeSponsorsNote" class="text-amber-200/90 text-sm mb-4 hidden" role="status">
+          Gratis versie — alleen Arkastro-sponsoring. Eigen sponsors vereisen een licentie.
+        </p>
         <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"></div>
-        <h3 class="text-xl font-bold mb-4">Nieuwe sponsor</h3>
-        <div class="flex flex-col gap-4">
-          <div class="setting-item">
-            <label for="sponsorName" class="text-lg">Naam:</label>
-            <input type="text" id="sponsorName" class="form-input" autocomplete="off">
-          </div>
-          <div class="setting-item">
-            <label class="text-lg">Logo:</label>
-            <div class="file-input-container">
-              <input type="file" id="sponsorLogo" class="hidden" accept="image/*">
-              <label for="sponsorLogo" id="sponsorLogoLabel" class="file-input-label form-input">Kies bestand...</label>
-              <img id="sponsorLogoPreview" class="logo-preview hidden" src="" alt="Sponsor preview">
+        <div id="addSponsorForm">
+          <h3 class="text-xl font-bold mb-4">Nieuwe sponsor</h3>
+          <div class="flex flex-col gap-4">
+            <div class="setting-item">
+              <label for="sponsorName" class="text-lg">Naam:</label>
+              <input type="text" id="sponsorName" class="form-input" autocomplete="off">
             </div>
+            <div class="setting-item">
+              <label class="text-lg">Logo:</label>
+              <div class="file-input-container">
+                <input type="file" id="sponsorLogo" class="hidden" accept="image/*">
+                <label for="sponsorLogo" id="sponsorLogoLabel" class="file-input-label form-input">Kies bestand...</label>
+                <img id="sponsorLogoPreview" class="logo-preview hidden" src="" alt="Sponsor preview">
+              </div>
+            </div>
+            <button type="button" id="addSponsorButton" class="menu-button bg-bingo-blue self-end text-base py-3">
+              <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span class="btn-label">Toevoegen</span>
+            </button>
           </div>
-          <button type="button" id="addSponsorButton" class="menu-button bg-bingo-blue self-end text-base py-3">
-            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            <span class="btn-label">Toevoegen</span>
-          </button>
         </div>
         <p id="sponsorError" class="field-error hidden" role="alert"></p>
       </section>

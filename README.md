@@ -2,7 +2,22 @@
 
 Desktop bingo caller for live events (Dutch UI). Runs on **Windows**, **macOS**, and **Linux** via Electron.
 
-Operators use one fullscreen window and **mirror the laptop display** to the projector (OS display mirroring) — there is no separate audience window.
+## Free vs paid
+
+| | Free | Paid (license key) |
+|--|------|--------------------|
+| Branding | Mandatory Arkastro logo + sponsor | Custom logo, sponsors, brand colours |
+| Saves | Last game only (1 slot) | Multiple save slots |
+| Avondrapport | — | HTML export |
+| Audience display | OS screen mirroring | Dedicated second window |
+
+Activate a key under **Voorkeuren → Licentie**. Keys are offline Ed25519-signed (no daily server callback). Issue keys with:
+
+```bash
+node scripts/issue-license.js --lic BNG-XXXX --email klant@example.be
+```
+
+(Requires `secrets/license-private.b64` or `LICENSE_PRIVATE_KEY_B64` — see `secrets/README.md`.)
 
 ## Requirements
 
@@ -83,9 +98,9 @@ Settings, logos, sponsors, and savegames live under the Electron **user data** f
 
 ## Running an event (projector)
 
-1. Connect the projector/TV and set the OS to **duplicate / mirror** the laptop screen.
-2. Start Bingo and press **F11** (or **View → Toggle Full Screen**) so the caller fills the display.
-3. Call numbers as usual — the projector shows the same UI.
+**Free:** connect the projector/TV in **duplicate / mirror** mode, start Bingo, press **F11** (or **Beeld → Volledig scherm**).
+
+**Paid:** open **Venster voor publiek** (menu or Beeld) on the second display, or still use OS mirroring if you prefer.
 
 ## Architecture (short)
 
@@ -99,5 +114,3 @@ Board size is fixed at **90** numbers (10 columns) via `game/constants.js` for a
 ## License
 
 Proprietary © [Arkastro BV](https://arkastro.be) (Rozenstraat 5, 2580 Putte, BE1036200718). See [`LICENSE`](LICENSE) and [`EULA.md`](EULA.md).
-
-These legal texts are a starting template — have a Belgian lawyer review them before relying on them commercially. The in-app EULA page shows `EULA.md`. The updater can later point at a paid/generic HTTPS feed without a rewrite.

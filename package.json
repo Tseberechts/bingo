@@ -49,6 +49,7 @@
       "!.github/**",
       "!.cache/**",
       "!sponsors/**",
+      "!secrets/**",
       "!eslint.config.js",
       "!commitlint.config.js",
       "!.husky/**",

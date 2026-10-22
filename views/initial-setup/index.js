@@ -35,6 +35,10 @@ const addSponsorButton = document.getElementById('addSponsorButton');
 const sponsorError = document.getElementById('sponsorError');
 
 const summaryList = document.getElementById('summaryList');
+const freeLogoNote = document.getElementById('freeLogoNote');
+const freeSponsorsNote = document.getElementById('freeSponsorsNote');
+const logoUploadControls = document.getElementById('logoUploadControls');
+const addSponsorForm = document.getElementById('addSponsorForm');
 
 const backButton = document.getElementById('backButton');
 const nextButton = document.getElementById('nextButton');
@@ -42,6 +46,7 @@ const laterButton = document.getElementById('laterButton');
 
 let currentStep = 0;
 const DEFAULT_TITLE = 'BINGO';
+let entitlements = { isPaid: false, customMainLogo: false, customSponsors: false };
 
 let settings = {
   gameTitle: DEFAULT_TITLE,
@@ -87,10 +92,11 @@ const updateDisplayWarning = () => {
   if (!displayWarning) return;
   const warnings = [];
   const modes = [inGameDisplayModeSelect.value, pauseDisplayModeSelect.value];
-  if (modes.includes('logo') && !settings.mainLogoPath) {
+  // Free tier always has Arkastro logo/sponsor via getSettingsForRenderer.
+  if (entitlements.customMainLogo && modes.includes('logo') && !settings.mainLogoPath) {
     warnings.push('Je koos “Hoofdlogo tonen”, maar er is nog geen logo geüpload.');
   }
-  if (modes.includes('sponsors') && !(settings.sponsors || []).length) {
+  if (entitlements.customSponsors && modes.includes('sponsors') && !(settings.sponsors || []).length) {
     warnings.push('Je koos “Sponsors tonen”, maar er zijn nog geen sponsors toegevoegd.');
   }
   if (!warnings.length) {
@@ -102,12 +108,25 @@ const updateDisplayWarning = () => {
   displayWarning.classList.remove('hidden');
 };
 
+const applyEntitlementUi = () => {
+  const paidLogo = Boolean(entitlements.customMainLogo);
+  const paidSponsors = Boolean(entitlements.customSponsors);
+  if (freeLogoNote) freeLogoNote.classList.toggle('hidden', paidLogo);
+  if (logoUploadControls) logoUploadControls.classList.toggle('hidden', !paidLogo);
+  if (freeSponsorsNote) freeSponsorsNote.classList.toggle('hidden', paidSponsors);
+  if (addSponsorForm) addSponsorForm.classList.toggle('hidden', !paidSponsors);
+};
+
 const updateMainLogoUI = (logoPath, fileName) => {
   if (logoPath) {
     mainLogoPreview.src = logoPath;
     mainLogoPreview.classList.remove('hidden');
     noLogoText.classList.add('hidden');
-    deleteMainLogoButton.classList.remove('hidden');
+    if (entitlements.customMainLogo && !settings.mainLogoLocked) {
+      deleteMainLogoButton.classList.remove('hidden');
+    } else {
+      deleteMainLogoButton.classList.add('hidden');
+    }
     mainLogoLabel.textContent = fileName || 'Logo geüpload';
   } else {
     mainLogoPreview.classList.add('hidden');
@@ -140,18 +159,21 @@ const renderSponsors = (sponsors) => {
     name.className = 'name';
     name.textContent = sponsor.name;
 
-    const deleteBtn = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    deleteBtn.setAttribute('class', 'delete-sponsor-btn');
-    deleteBtn.setAttribute('data-id', String(sponsor.id));
-    deleteBtn.setAttribute('fill', 'none');
-    deleteBtn.setAttribute('stroke', 'currentColor');
-    deleteBtn.setAttribute('viewBox', '0 0 24 24');
-    deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
-    deleteBtn.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
-
     sponsorEl.appendChild(img);
     sponsorEl.appendChild(name);
-    sponsorEl.appendChild(deleteBtn);
+
+    if (entitlements.customSponsors && !sponsor.locked) {
+      const deleteBtn = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      deleteBtn.setAttribute('class', 'delete-sponsor-btn');
+      deleteBtn.setAttribute('data-id', String(sponsor.id));
+      deleteBtn.setAttribute('fill', 'none');
+      deleteBtn.setAttribute('stroke', 'currentColor');
+      deleteBtn.setAttribute('viewBox', '0 0 24 24');
+      deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
+      deleteBtn.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+      sponsorEl.appendChild(deleteBtn);
+    }
+
     sponsorList.appendChild(sponsorEl);
   });
 };
@@ -408,6 +430,8 @@ inGameDisplayModeSelect.addEventListener('change', updateDisplayWarning);
 pauseDisplayModeSelect.addEventListener('change', updateDisplayWarning);
 
 window.onload = async () => {
+  entitlements = (await api.getEntitlements()) || entitlements;
+  applyEntitlementUi();
   const loaded = await api.getSettings();
   applySettingsToForm(loaded);
   const resumeStep = Number.isInteger(loaded.setupStep) ? loaded.setupStep : 0;

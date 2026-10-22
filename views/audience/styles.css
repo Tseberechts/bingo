@@ -1,0 +1,4 @@
+.audience-view footer,
+.audience-view .action-button {
+  display: none !important;
+}
