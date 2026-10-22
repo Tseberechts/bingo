@@ -25,6 +25,10 @@ const loadSettings = () => {
       const settingsData = fs.readFileSync(settingsPath, 'utf-8');
       const savedSettings = JSON.parse(settingsData);
       settings = mergeSettings(defaultSettings, savedSettings);
+      // Legacy installs: settings file without setupComplete means setup was already done
+      if (!Object.prototype.hasOwnProperty.call(savedSettings, 'setupComplete')) {
+        settings.setupComplete = true;
+      }
     } else {
       settings = { ...defaultSettings };
     }
@@ -52,6 +56,15 @@ const saveSettings = (newSettings) => {
 };
 
 const getSettings = () => settings;
+
+/**
+ * Setup is finished when a settings file exists and setupComplete is true.
+ * Missing setupComplete on an existing file is treated as finished (legacy installs).
+ */
+const isSetupComplete = () => {
+  if (!settingsExist()) return false;
+  return getSettings().setupComplete === true;
+};
 
 /** Settings shaped for the renderer (file URLs for images). */
 const getSettingsForRenderer = () => {
@@ -91,5 +104,6 @@ module.exports = {
   getSettings,
   getSettingsForRenderer,
   settingsExist,
+  isSetupComplete,
   deleteSettings,
 };

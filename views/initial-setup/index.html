@@ -1,30 +1,135 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; script-src 'self'">
-    <title>Welkom bij Bingo</title>
-    <link rel="stylesheet" href="../../styles/global.css">
-    <link rel="stylesheet" href="./styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; script-src 'self'">
+  <title>Welkom bij Bingo</title>
+  <link rel="stylesheet" href="../../styles/global.css">
+  <link rel="stylesheet" href="./styles.css">
 </head>
-<body class="bg-dark-bg min-h-screen font-sans text-white p-8 flex flex-col items-center justify-center text-center">
+<body class="bg-dark-bg min-h-screen font-sans text-white p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
 
-    <header class="mb-12">
-        <h1 class="text-6xl font-extrabold tracking-tight text-bingo-yellow">Welkom bij Bingo!</h1>
-        <p class="text-xl text-gray-300 mt-4">Laten we een paar dingen instellen.</p>
-    </header>
+  <header class="text-center mb-8">
+    <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight text-bingo-yellow">Welkom bij Bingo!</h1>
+    <p class="text-xl text-gray-300 mt-4">Laten we een paar dingen instellen.</p>
+  </header>
 
-    <main class="w-full max-w-lg">
-        <div class="setting-section">
-            <div class="setting-item">
-                <label for="gameTitle" class="text-lg">Titel van het spel:</label>
-                <input type="text" id="gameTitle" class="form-input" value="ROZENSTRAAT BINGO">
-            </div>
+  <main class="w-full max-w-2xl">
+    <div class="wizard-progress mb-6">
+      <p id="stepLabel" class="text-sm text-gray-400 mb-3">Stap 1 van 5</p>
+      <div class="step-dots" id="stepDots" aria-hidden="true"></div>
+    </div>
+
+    <div class="wizard-card">
+      <!-- Step 0: Title -->
+      <section class="wizard-step" data-step="0">
+        <h2 class="text-2xl font-bold mb-2">Titel van het spel</h2>
+        <p class="text-gray-400 mb-6">Deze titel zie je bovenaan het spelscherm.</p>
+        <div class="setting-item">
+          <label for="gameTitle" class="text-lg">Titel:</label>
+          <input type="text" id="gameTitle" class="form-input" maxlength="80" autocomplete="off">
         </div>
-        <button id="getStartedButton" class="menu-button bg-bingo-green px-12 py-4 text-2xl mt-8">Aan de slag</button>
-    </main>
+        <p id="titleError" class="field-error hidden" role="alert">Vul een titel in voor je bingo.</p>
+        <div class="mt-8 pt-6 border-t border-gray-600">
+          <p class="text-gray-400 text-sm mb-3">Of spring meteen naar een kant-en-klare demo.</p>
+          <button type="button" id="demoButton" class="menu-button bg-bingo-blue text-base py-3">Gebruik de demo</button>
+        </div>
+      </section>
 
-    <script src="index.js"></script>
+      <!-- Step 1: Logo -->
+      <section class="wizard-step hidden" data-step="1">
+        <h2 class="text-2xl font-bold mb-2">Hoofdlogo</h2>
+        <p class="text-gray-400 mb-6">Optioneel. Je kunt dit later nog toevoegen of wijzigen.</p>
+        <div class="setting-item">
+          <label class="text-lg">Huidig logo:</label>
+          <div class="logo-container">
+            <img id="mainLogoPreview" class="logo-preview hidden" src="" alt="Logo Preview">
+            <span id="noLogoText" class="text-gray-400">Geen logo ingesteld.</span>
+          </div>
+        </div>
+        <div class="setting-item">
+          <label for="mainLogo" class="text-lg">Upload logo:</label>
+          <div class="file-input-container">
+            <input type="file" id="mainLogo" class="hidden" accept="image/*">
+            <label for="mainLogo" id="mainLogoLabel" class="file-input-label form-input">Kies bestand...</label>
+          </div>
+        </div>
+        <div class="setting-item justify-end">
+          <button type="button" id="deleteMainLogo" class="menu-button bg-bingo-red p-2 text-sm hidden">Verwijder logo</button>
+        </div>
+        <p id="logoError" class="field-error hidden" role="alert"></p>
+      </section>
+
+      <!-- Step 2: Display -->
+      <section class="wizard-step hidden" data-step="2">
+        <h2 class="text-2xl font-bold mb-2">Weergave</h2>
+        <p class="text-gray-400 mb-6">Kies wat er naast het bord of op het pauzescherm te zien is.</p>
+        <div class="setting-item">
+          <label for="inGameDisplayMode" class="text-lg">Spelscherm:</label>
+          <select id="inGameDisplayMode" class="form-input">
+            <option value="hide">Verbergen</option>
+            <option value="sponsors">Sponsors</option>
+            <option value="logo">Hoofdlogo</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label for="pauseDisplayMode" class="text-lg">Pauzescherm:</label>
+          <select id="pauseDisplayMode" class="form-input">
+            <option value="hide">Verbergen</option>
+            <option value="sponsors">Sponsors</option>
+            <option value="logo">Hoofdlogo</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Step 3: Sponsors -->
+      <section class="wizard-step hidden" data-step="3">
+        <h2 class="text-2xl font-bold mb-2">Sponsors</h2>
+        <p class="text-gray-400 mb-6">Optioneel. Voeg sponsors toe als je die wilt tonen.</p>
+        <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"></div>
+        <h3 class="text-xl font-bold mb-4">Nieuwe sponsor</h3>
+        <div class="flex flex-col gap-4">
+          <div class="setting-item">
+            <label for="sponsorName" class="text-lg">Naam:</label>
+            <input type="text" id="sponsorName" class="form-input" autocomplete="off">
+          </div>
+          <div class="setting-item">
+            <label class="text-lg">Logo:</label>
+            <div class="file-input-container">
+              <input type="file" id="sponsorLogo" class="hidden" accept="image/*">
+              <label for="sponsorLogo" id="sponsorLogoLabel" class="file-input-label form-input">Kies bestand...</label>
+              <img id="sponsorLogoPreview" class="logo-preview hidden" src="" alt="Sponsor preview">
+            </div>
+          </div>
+          <button type="button" id="addSponsorButton" class="menu-button bg-bingo-blue self-end text-base py-3">Toevoegen</button>
+        </div>
+        <p id="sponsorError" class="field-error hidden" role="alert"></p>
+      </section>
+
+      <!-- Step 4: Review -->
+      <section class="wizard-step hidden" data-step="4">
+        <h2 class="text-2xl font-bold mb-2">Klaar</h2>
+        <p class="text-gray-400 mb-6">Controleer je keuzes. Je kunt alles later nog wijzigen in Voorkeuren.</p>
+        <dl id="summaryList" class="summary-list"></dl>
+      </section>
+    </div>
+
+    <p id="wizardError" class="field-error text-center mt-4 hidden" role="alert"></p>
+
+    <div class="wizard-footer mt-8 flex flex-wrap items-center justify-between gap-4">
+      <button type="button" id="backButton" class="menu-button-secondary hidden">Vorige</button>
+      <div class="flex flex-wrap items-center gap-3 ml-auto">
+        <button type="button" id="laterButton" class="menu-button-secondary">Later verder</button>
+        <button type="button" id="nextButton" class="menu-button bg-bingo-green px-8 py-3 text-xl w-auto">Volgende</button>
+      </div>
+    </div>
+
+    <p class="text-center text-gray-500 text-sm mt-6">
+      Je kunt deze keuzes later altijd wijzigen in Voorkeuren.
+    </p>
+  </main>
+
+  <script src="index.js"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, shell, dialog } = require('electron');
 const path = require('path');
 const { initializeStorage, deleteAllSaves } = require('./game/storage');
 const { initializeIpc, registerWindow, unregisterWindow } = require('./game/ipc');
-const { initializeSettings, settingsExist, deleteSettings } = require('./game/settings');
+const { initializeSettings, isSetupComplete, deleteSettings } = require('./game/settings');
 
 let mainWindow;
 
@@ -19,10 +19,10 @@ function createWindow() {
     },
   });
 
-  if (settingsExist()) {
-    mainWindow.loadFile('views/menu/index.html');
+  if (isSetupComplete()) {
+    mainWindow.loadFile(path.join(__dirname, 'views/menu/index.html'));
   } else {
-    mainWindow.loadFile('views/initial-setup/index.html');
+    mainWindow.loadFile(path.join(__dirname, 'views/initial-setup/index.html'));
   }
 
   mainWindow.once('ready-to-show', () => {

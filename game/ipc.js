@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const { gameState, resetState } = require('./state');
 const { saveState, loadState, deleteSaveFile, listSaveGames, getLastSave } = require('./storage');
-const { getSettings, getSettingsForRenderer, saveSettings } = require('./settings');
+const { getSettings, getSettingsForRenderer, saveSettings, defaultSettings } = require('./settings');
+const { applyDemoSetup } = require('./demo-setup');
 const { callNextNumber, toggleCalledNumber } = require('./logic');
 const {
   sanitizeImageFileName,
@@ -11,8 +12,22 @@ const {
   toFileUrl,
 } = require('./paths');
 
+const DISPLAY_MODES = new Set(['hide', 'sponsors', 'logo']);
+const SETUP_STEP_COUNT = 5;
+
 let allWindows = [];
 let activeGameFile = null;
+
+const loadMenu = (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.loadFile(path.join(__dirname, '..', 'views/menu/index.html'));
+};
+
+const clampSetupStep = (step) => {
+  const n = Number(step);
+  if (!Number.isInteger(n)) return 0;
+  return Math.min(Math.max(n, 0), SETUP_STEP_COUNT - 1);
+};
 
 const broadcastUpdate = () => {
   allWindows.forEach((win) => {
@@ -50,17 +65,68 @@ const initializeIpc = () => {
     return win.isFullScreen();
   });
 
-  ipcMain.on('complete-initial-setup', (event, initialSettings) => {
-    const title = typeof initialSettings?.gameTitle === 'string'
-      ? initialSettings.gameTitle.trim()
-      : '';
-    if (!title) {
-      event.sender.send('setup-error', 'Vul een titel in.');
-      return;
+  ipcMain.handle('save-setup-progress', (_event, partial) => {
+    if (!partial || typeof partial !== 'object') {
+      return { ok: false, error: 'Ongeldige gegevens' };
     }
-    saveSettings({ gameTitle: title });
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (win) win.loadFile('views/menu/index.html');
+
+    const allowed = {
+      setupComplete: false,
+    };
+
+    if (typeof partial.gameTitle === 'string') {
+      const title = partial.gameTitle.trim();
+      allowed.gameTitle = title || defaultSettings.gameTitle;
+    }
+    if (DISPLAY_MODES.has(partial.inGameDisplayMode)) {
+      allowed.inGameDisplayMode = partial.inGameDisplayMode;
+    }
+    if (DISPLAY_MODES.has(partial.pauseDisplayMode)) {
+      allowed.pauseDisplayMode = partial.pauseDisplayMode;
+    }
+    if (partial.setupStep !== undefined) {
+      allowed.setupStep = clampSetupStep(partial.setupStep);
+    }
+
+    const result = saveSettings(allowed);
+    if (!result.ok) return result;
+    return { ok: true, settings: getSettingsForRenderer() };
+  });
+
+  ipcMain.handle('continue-setup-later', (event, payload) => {
+    const setupStep = clampSetupStep(payload?.setupStep ?? getSettings().setupStep);
+    const patch = {
+      setupStep,
+      setupComplete: false,
+    };
+    if (typeof payload?.gameTitle === 'string') {
+      const title = payload.gameTitle.trim();
+      patch.gameTitle = title || defaultSettings.gameTitle;
+    }
+    if (DISPLAY_MODES.has(payload?.inGameDisplayMode)) {
+      patch.inGameDisplayMode = payload.inGameDisplayMode;
+    }
+    if (DISPLAY_MODES.has(payload?.pauseDisplayMode)) {
+      patch.pauseDisplayMode = payload.pauseDisplayMode;
+    }
+    const result = saveSettings(patch);
+    if (!result.ok) return result;
+    loadMenu(event);
+    return { ok: true };
+  });
+
+  ipcMain.handle('complete-setup', (event) => {
+    const result = saveSettings({ setupComplete: true });
+    if (!result.ok) return result;
+    loadMenu(event);
+    return { ok: true };
+  });
+
+  ipcMain.handle('apply-demo-setup', (event) => {
+    const result = applyDemoSetup();
+    if (!result.ok) return result;
+    loadMenu(event);
+    return { ok: true };
   });
 
   ipcMain.handle('get-settings', () => getSettingsForRenderer());
@@ -70,11 +136,17 @@ const initializeIpc = () => {
     if (typeof partial.gameTitle === 'string') {
       allowed.gameTitle = partial.gameTitle.trim() || getSettings().gameTitle;
     }
-    if (['hide', 'sponsors', 'logo'].includes(partial.inGameDisplayMode)) {
+    if (DISPLAY_MODES.has(partial.inGameDisplayMode)) {
       allowed.inGameDisplayMode = partial.inGameDisplayMode;
     }
-    if (['hide', 'sponsors', 'logo'].includes(partial.pauseDisplayMode)) {
+    if (DISPLAY_MODES.has(partial.pauseDisplayMode)) {
       allowed.pauseDisplayMode = partial.pauseDisplayMode;
+    }
+    if (partial.setupStep !== undefined) {
+      allowed.setupStep = clampSetupStep(partial.setupStep);
+    }
+    if (typeof partial.setupComplete === 'boolean') {
+      allowed.setupComplete = partial.setupComplete;
     }
     if (Object.keys(allowed).length) saveSettings(allowed);
   });

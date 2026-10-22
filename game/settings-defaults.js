@@ -1,12 +1,14 @@
 const { MAX_NUMBER } = require('./constants');
 
 const defaultSettings = {
-  gameTitle: 'ROZENSTRAAT BINGO',
+  gameTitle: 'MIJN AWESOME BINGO',
   mainLogoPath: null,
   inGameDisplayMode: 'hide', // 'hide', 'sponsors', or 'logo'
   pauseDisplayMode: 'hide', // 'hide', 'sponsors', or 'logo'
   sponsors: [],
   maxNumber: MAX_NUMBER,
+  setupStep: 0,
+  setupComplete: false,
 };
 
 const mergeSettings = (defaults, saved = {}) => ({

@@ -1,38 +1,199 @@
-.setting-section {
-    background-color: #1f2937; /* gray-800 */
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    text-align: left;
+.wizard-card {
+  background-color: #1f2937; /* gray-800 */
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.wizard-step {
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.step-dots {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.step-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  background-color: #4b5563; /* gray-600 */
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.step-dot.active {
+  background-color: var(--color-bingo-yellow, #f1c40f);
+  transform: scale(1.15);
+}
+
+.step-dot.done {
+  background-color: var(--color-bingo-green, #2ecc71);
 }
 
 .setting-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
 .setting-item:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .setting-item label {
-    flex-basis: 45%;
+  flex-basis: 40%;
+  flex-shrink: 0;
 }
 
 .form-input {
-    background-color: #111827; /* gray-900 */
-    color: white;
-    border: 2px solid #4b5563; /* gray-600 */
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    transition: all 0.2s ease-in-out;
-    flex-basis: 50%;
+  background-color: #111827; /* gray-900 */
+  color: white;
+  border: 2px solid #4b5563; /* gray-600 */
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease-in-out;
+  flex-basis: 55%;
+  flex-grow: 1;
+  min-width: 0;
 }
 
 .form-input:focus {
-    outline: none;
-    border-color: #f59e0b; /* bingo-yellow */
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+  outline: none;
+  border-color: #f59e0b; /* bingo-yellow */
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+}
+
+.file-input-container {
+  display: flex;
+  align-items: center;
+  flex-basis: 55%;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.file-input-label {
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-grow: 1;
+}
+
+.logo-preview {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  background-color: white;
+  border-radius: 0.5rem;
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+
+.logo-container {
+  flex-basis: 55%;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.sponsor-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #111827;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  gap: 1rem;
+}
+
+.sponsor-item img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background-color: white;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+}
+
+.sponsor-item .name {
+  flex-grow: 1;
+  font-size: 1rem;
+  font-weight: bold;
+  min-width: 0;
+}
+
+.delete-sponsor-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.delete-sponsor-btn:hover {
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #374151;
+}
+
+.summary-row dt {
+  color: #9ca3af;
+}
+
+.summary-row dd {
+  font-weight: 600;
+  text-align: right;
+}
+
+.field-error {
+  color: #f87171;
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.wizard-footer .menu-button {
+  width: auto;
+}
+
+.wizard-footer .menu-button-secondary {
+  cursor: pointer;
+  border: 2px solid #4b5563;
+  background: transparent;
+  color: #9ca3af;
+}
+
+.wizard-footer .menu-button-secondary:hover {
+  background-color: #4b5563;
+  color: white;
 }

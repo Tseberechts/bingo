@@ -9,6 +9,8 @@ describe('mergeSettings', () => {
     assert.equal(merged.inGameDisplayMode, 'hide');
     assert.equal(merged.maxNumber, defaultSettings.maxNumber);
     assert.deepEqual(merged.sponsors, []);
+    assert.equal(merged.setupStep, 0);
+    assert.equal(merged.setupComplete, false);
   });
 
   it('keeps provided sponsors array', () => {
@@ -20,5 +22,14 @@ describe('mergeSettings', () => {
   it('falls back to default sponsors when saved sponsors is not an array', () => {
     const merged = mergeSettings(defaultSettings, { sponsors: 'bad' });
     assert.deepEqual(merged.sponsors, []);
+  });
+
+  it('preserves setup progress fields when provided', () => {
+    const merged = mergeSettings(defaultSettings, {
+      setupStep: 3,
+      setupComplete: false,
+    });
+    assert.equal(merged.setupStep, 3);
+    assert.equal(merged.setupComplete, false);
   });
 });

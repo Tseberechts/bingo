@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Bakkerij Molen">
+  <rect width="256" height="256" rx="24" fill="#E67E22"/>
+  <ellipse cx="128" cy="140" rx="78" ry="48" fill="#F5C16C"/>
+  <ellipse cx="128" cy="128" rx="62" ry="36" fill="#F7D794"/>
+  <path d="M70 130c18-28 40-42 58-42s40 14 58 42" fill="none" stroke="#C0392B" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="100" cy="118" r="6" fill="#C0392B"/>
+  <circle cx="128" cy="110" r="6" fill="#C0392B"/>
+  <circle cx="156" cy="118" r="6" fill="#C0392B"/>
+  <text x="128" y="230" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#FFF8E7">BAKKERIJ MOLEN</text>
+</svg>

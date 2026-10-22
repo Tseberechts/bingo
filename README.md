@@ -33,9 +33,9 @@ Useful scripts:
 
 ## First run
 
-1. Enter a game title on the welcome screen.
-2. Use **Voorkeuren** for logo, sponsor carousel, and in-game / pause display modes.
-3. Start a new game, or resume / load a save.
+1. Complete the guided setup wizard (title, logo, display modes, sponsors), or choose **Gebruik de demo** for a ready-made sample.
+2. Use **Later verder** to pause setup; the next launch resumes on the same step.
+3. Start a new game, or resume / load a save. Change anything later in **Voorkeuren**.
 
 Settings, logos, sponsors, and savegames live under the Electron **user data** folder (Developer menu → *Open Data Folder* in unpackaged builds).
 

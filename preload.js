@@ -4,7 +4,12 @@ contextBridge.exposeInMainWorld('bingo', {
   // App
   exitApp: () => ipcRenderer.send('exit-app'),
   toggleFullscreen: () => ipcRenderer.invoke('toggle-fullscreen'),
-  completeInitialSetup: (settings) => ipcRenderer.send('complete-initial-setup', settings),
+
+  // Initial setup wizard
+  saveSetupProgress: (payload) => ipcRenderer.invoke('save-setup-progress', payload),
+  continueSetupLater: (payload) => ipcRenderer.invoke('continue-setup-later', payload),
+  completeSetup: () => ipcRenderer.invoke('complete-setup'),
+  applyDemoSetup: () => ipcRenderer.invoke('apply-demo-setup'),
 
   // Settings
   getSettings: () => ipcRenderer.invoke('get-settings'),

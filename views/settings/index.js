@@ -188,7 +188,7 @@ deleteMainLogoButton.addEventListener('click', async () => {
 
 window.onload = async () => {
   const settings = await api.getSettings();
-  gameTitleInput.value = settings.gameTitle || 'ROZENSTRAAT BINGO';
+  gameTitleInput.value = settings.gameTitle || 'MIJN AWESOME BINGO';
   inGameDisplayModeSelect.value = settings.inGameDisplayMode;
   pauseDisplayModeSelect.value = settings.pauseDisplayMode;
   updateMainLogoUI(settings.mainLogoPath, settings.mainLogoFileName);
