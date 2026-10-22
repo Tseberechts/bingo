@@ -3,6 +3,7 @@ const path = require('path');
 const { app } = require('electron');
 const { toFileUrl } = require('./paths');
 const { defaultSettings, mergeSettings } = require('./settings-defaults');
+const { getCurrentEulaHash } = require('./eula');
 
 let settingsPath;
 let settings = {};
@@ -66,10 +67,19 @@ const isSetupComplete = () => {
   return getSettings().setupComplete === true;
 };
 
-/** True when the user has accepted the EULA on this machine. */
+/**
+ * True when the user has accepted the current EULA text on this machine.
+ * Missing or outdated content hash forces re-accept after EULA.md changes.
+ */
 const isEulaAccepted = () => {
-  const at = getSettings().eulaAcceptedAt;
-  return typeof at === 'string' && at.length > 0;
+  const { eulaAcceptedAt: at, eulaAcceptedHash: stored } = getSettings();
+  if (typeof at !== 'string' || !at.length) return false;
+  if (typeof stored !== 'string' || !stored.length) return false;
+  try {
+    return stored === getCurrentEulaHash();
+  } catch {
+    return false;
+  }
 };
 
 /** Settings shaped for the renderer (file URLs for images). */

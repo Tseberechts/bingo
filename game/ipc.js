@@ -18,6 +18,8 @@ const {
   toFileUrl,
 } = require('./paths');
 const { readBuildInfo } = require('./version');
+const { readEulaText } = require('./eula');
+const { hashEulaText } = require('./eula-hash');
 const {
   checkForUpdates,
   downloadUpdate,
@@ -172,16 +174,28 @@ const initializeIpc = () => {
 
   ipcMain.handle('get-eula', () => {
     try {
-      const eulaPath = path.join(app.getAppPath(), 'EULA.md');
-      const text = fs.readFileSync(eulaPath, 'utf-8');
-      return { ok: true, text };
+      const text = readEulaText();
+      const hash = hashEulaText(text);
+      const { eulaAcceptedAt: at, eulaAcceptedHash: stored } = getSettings();
+      const hadPriorAccept = typeof at === 'string' && at.length > 0;
+      const reaccept = hadPriorAccept && stored !== hash;
+      return { ok: true, text, reaccept };
     } catch (error) {
       return { ok: false, error: error.message || 'Kon EULA niet lezen' };
     }
   });
 
   ipcMain.handle('accept-eula', (event) => {
-    const result = saveSettings({ eulaAcceptedAt: new Date().toISOString() });
+    let hash;
+    try {
+      hash = hashEulaText(readEulaText());
+    } catch (error) {
+      return { ok: false, error: error.message || 'Kon EULA niet lezen' };
+    }
+    const result = saveSettings({
+      eulaAcceptedAt: new Date().toISOString(),
+      eulaAcceptedHash: hash,
+    });
     if (!result.ok) return result;
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win && !win.isDestroyed()) {

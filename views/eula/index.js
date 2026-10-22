@@ -6,6 +6,7 @@ const from = params.get('from') || 'about';
 
 const eulaBody = document.getElementById('eulaBody');
 const acceptBar = document.getElementById('acceptBar');
+const reacceptNotice = document.getElementById('reacceptNotice');
 const backBar = document.getElementById('backBar');
 const backLink = document.getElementById('backLink');
 const eulaCheckbox = document.getElementById('eulaCheckbox');
@@ -160,6 +161,10 @@ const loadEula = async () => {
     return;
   }
   eulaBody.replaceChildren(renderMarkdown(result.text));
+  if (reacceptNotice) {
+    const showReaccept = Boolean(isAcceptMode && result.reaccept);
+    reacceptNotice.classList.toggle('hidden', !showReaccept);
+  }
 };
 
 const setupMode = () => {

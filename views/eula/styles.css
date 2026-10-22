@@ -90,6 +90,17 @@
   padding: 1.25rem 1.5rem;
 }
 
+.eula-reaccept-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--color-bingo-orange, #f97316);
+  background: rgba(249, 115, 22, 0.12);
+  color: #fed7aa;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
 .eula-checkbox-row {
   display: flex;
   align-items: flex-start;
