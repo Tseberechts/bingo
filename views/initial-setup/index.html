@@ -32,7 +32,7 @@
         </div>
         <p id="titleError" class="field-error hidden" role="alert">Vul een titel in voor je bingo.</p>
         <div class="mt-8 pt-6 border-t border-gray-600">
-          <p class="text-gray-400 text-sm mb-3">Of spring meteen naar een kant-en-klare demo.</p>
+          <p class="text-gray-400 text-sm mb-3">Of spring meteen naar een kant-en-klare demo met titel, logo, sponsors en weergave.</p>
           <button type="button" id="demoButton" class="menu-button bg-bingo-blue text-base py-3">Gebruik de demo</button>
         </div>
       </section>
@@ -40,7 +40,7 @@
       <!-- Step 1: Logo -->
       <section class="wizard-step hidden" data-step="1">
         <h2 class="text-2xl font-bold mb-2">Hoofdlogo</h2>
-        <p class="text-gray-400 mb-6">Optioneel. Je kunt dit later nog toevoegen of wijzigen.</p>
+        <p class="text-gray-400 mb-6">Optioneel. Dit logo verschijnt als je bij Weergave “Hoofdlogo tonen” kiest. Je kunt dit later nog toevoegen of wijzigen.</p>
         <div class="setting-item">
           <label class="text-lg">Huidig logo:</label>
           <div class="logo-container">
@@ -64,21 +64,21 @@
       <!-- Step 2: Display -->
       <section class="wizard-step hidden" data-step="2">
         <h2 class="text-2xl font-bold mb-2">Weergave</h2>
-        <p class="text-gray-400 mb-6">Kies wat er naast het bord of op het pauzescherm te zien is.</p>
+        <p class="text-gray-400 mb-6">Kies wat er tijdens het spel naast het bingobord te zien is, en wat er verschijnt terwijl het spel gepauzeerd is.</p>
         <div class="setting-item">
           <label for="inGameDisplayMode" class="text-lg">Spelscherm:</label>
           <select id="inGameDisplayMode" class="form-input">
-            <option value="hide">Verbergen</option>
-            <option value="sponsors">Sponsors</option>
-            <option value="logo">Hoofdlogo</option>
+            <option value="hide">Niets tonen</option>
+            <option value="sponsors">Sponsors tonen</option>
+            <option value="logo">Hoofdlogo tonen</option>
           </select>
         </div>
         <div class="setting-item">
           <label for="pauseDisplayMode" class="text-lg">Pauzescherm:</label>
           <select id="pauseDisplayMode" class="form-input">
-            <option value="hide">Verbergen</option>
-            <option value="sponsors">Sponsors</option>
-            <option value="logo">Hoofdlogo</option>
+            <option value="hide">Niets tonen</option>
+            <option value="sponsors">Sponsors tonen</option>
+            <option value="logo">Hoofdlogo tonen</option>
           </select>
         </div>
         <p id="displayWarning" class="field-error hidden" role="status"></p>
@@ -87,7 +87,7 @@
       <!-- Step 3: Sponsors -->
       <section class="wizard-step hidden" data-step="3">
         <h2 class="text-2xl font-bold mb-2">Sponsors</h2>
-        <p class="text-gray-400 mb-6">Optioneel. Voeg sponsors toe als je die wilt tonen.</p>
+        <p class="text-gray-400 mb-6">Optioneel. Sponsors zijn zichtbaar als je bij Weergave “Sponsors tonen” koos (of dat later in Voorkeuren instelt).</p>
         <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"></div>
         <h3 class="text-xl font-bold mb-4">Nieuwe sponsor</h3>
         <div class="flex flex-col gap-4">

@@ -28,7 +28,8 @@
     <!-- Main Settings Tab -->
     <div id="main" class="tab-content active">
       <div class="setting-section">
-        <h2 class="text-2xl font-bold mb-6">Spel</h2>
+        <h2 class="text-2xl font-bold mb-2">Spel</h2>
+        <p class="text-gray-400 mb-6">Deze titel staat bovenaan het spelscherm.</p>
         <div class="setting-item">
           <label for="gameTitle" class="text-lg">Titel van het spel:</label>
           <input type="text" id="gameTitle" class="form-input">
@@ -41,32 +42,35 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- In-Game Display Settings -->
         <div class="setting-section">
-          <h2 class="text-2xl font-bold mb-6">Spelscherm</h2>
+          <h2 class="text-2xl font-bold mb-2">Spelscherm</h2>
+          <p class="text-gray-400 mb-6">Kies wat er tijdens het spel naast het bingobord te zien is.</p>
           <div class="setting-item">
-            <label class="text-lg">Sponsorweergave:</label>
+            <label class="text-lg">Weergave:</label>
             <select id="inGameDisplayMode" class="form-input">
-              <option value="hide">Verbergen</option>
-              <option value="sponsors">Sponsors</option>
-              <option value="logo">Hoofdlogo</option>
+              <option value="hide">Niets tonen</option>
+              <option value="sponsors">Sponsors tonen</option>
+              <option value="logo">Hoofdlogo tonen</option>
             </select>
           </div>
         </div>
         <!-- Pause Screen Display Settings -->
         <div class="setting-section">
-          <h2 class="text-2xl font-bold mb-6">Pauzescherm</h2>
+          <h2 class="text-2xl font-bold mb-2">Pauzescherm</h2>
+          <p class="text-gray-400 mb-6">Kies wat er te zien is terwijl het spel gepauzeerd is.</p>
           <div class="setting-item">
-            <label class="text-lg">Sponsorweergave:</label>
+            <label class="text-lg">Weergave:</label>
             <select id="pauseDisplayMode" class="form-input">
-              <option value="hide">Verbergen</option>
-              <option value="sponsors">Sponsors</option>
-              <option value="logo">Hoofdlogo</option>
+              <option value="hide">Niets tonen</option>
+              <option value="sponsors">Sponsors tonen</option>
+              <option value="logo">Hoofdlogo tonen</option>
             </select>
           </div>
         </div>
         <p id="displayWarning" class="field-error text-center hidden lg:col-span-2" role="status"></p>
         <!-- Main Logo Upload -->
         <div class="setting-section lg:col-span-2">
-          <h2 class="text-2xl font-bold mb-6">Hoofdlogo</h2>
+          <h2 class="text-2xl font-bold mb-2">Hoofdlogo</h2>
+          <p class="text-gray-400 mb-6">Dit logo verschijnt als je bij Spelscherm of Pauzescherm “Hoofdlogo tonen” kiest.</p>
           <div class="setting-item">
             <label class="text-lg">Huidig logo:</label>
             <div class="logo-container">
@@ -91,7 +95,8 @@
     <!-- Sponsors Tab -->
     <div id="sponsors" class="tab-content hidden">
       <div class="setting-section">
-        <h2 class="text-2xl font-bold mb-6">Huidige Sponsors</h2>
+        <h2 class="text-2xl font-bold mb-2">Huidige Sponsors</h2>
+        <p class="text-gray-400 mb-6">Sponsors verschijnen als je bij Weergave “Sponsors tonen” kiest.</p>
         <div id="sponsorList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8"></div>
         <h2 class="text-2xl font-bold mb-6">Nieuwe Sponsor Toevoegen</h2>
         <div class="flex flex-col gap-4">

@@ -2,9 +2,9 @@ const api = window.bingo;
 
 const TOTAL_STEPS = 5;
 const DISPLAY_LABELS = {
-  hide: 'Verbergen',
-  sponsors: 'Sponsors',
-  logo: 'Hoofdlogo',
+  hide: 'Niets tonen',
+  sponsors: 'Sponsors tonen',
+  logo: 'Hoofdlogo tonen',
 };
 
 const stepLabel = document.getElementById('stepLabel');
@@ -88,10 +88,10 @@ const updateDisplayWarning = () => {
   const warnings = [];
   const modes = [inGameDisplayModeSelect.value, pauseDisplayModeSelect.value];
   if (modes.includes('logo') && !settings.mainLogoPath) {
-    warnings.push('Je koos Hoofdlogo, maar er is nog geen logo geüpload.');
+    warnings.push('Je koos “Hoofdlogo tonen”, maar er is nog geen logo geüpload.');
   }
   if (modes.includes('sponsors') && !(settings.sponsors || []).length) {
-    warnings.push('Je koos Sponsors, maar er zijn nog geen sponsors toegevoegd.');
+    warnings.push('Je koos “Sponsors tonen”, maar er zijn nog geen sponsors toegevoegd.');
   }
   if (!warnings.length) {
     displayWarning.classList.add('hidden');

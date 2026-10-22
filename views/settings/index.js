@@ -41,10 +41,10 @@ const updateDisplayWarning = () => {
   const warnings = [];
   const modes = [inGameDisplayModeSelect.value, pauseDisplayModeSelect.value];
   if (modes.includes('logo') && !currentSettings.mainLogoPath) {
-    warnings.push('Je koos Hoofdlogo, maar er is nog geen logo geüpload.');
+    warnings.push('Je koos “Hoofdlogo tonen”, maar er is nog geen logo geüpload.');
   }
   if (modes.includes('sponsors') && !(currentSettings.sponsors || []).length) {
-    warnings.push('Je koos Sponsors, maar er zijn nog geen sponsors toegevoegd.');
+    warnings.push('Je koos “Sponsors tonen”, maar er zijn nog geen sponsors toegevoegd.');
   }
   if (!warnings.length) {
     displayWarning.classList.add('hidden');
