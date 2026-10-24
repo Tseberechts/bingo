@@ -1,9 +1,12 @@
 const { app, BrowserWindow, Menu, shell, dialog } = require('electron');
 const path = require('path');
+const { initializeSentryMain, isSentryEnabled, captureVerificationError } = require('./game/sentry');
 const { initializeStorage, deleteAllSaves } = require('./game/storage');
 const { initializeIpc, registerWindow, unregisterWindow } = require('./game/ipc');
 const { initializeSettings, isSetupComplete, isEulaAccepted, deleteSettings } = require('./game/settings');
 const { initializeUpdater, scheduleStartupCheck } = require('./game/updater');
+
+initializeSentryMain();
 
 let mainWindow;
 
@@ -95,6 +98,17 @@ function createMenu() {
             app.quit();
           },
         },
+        ...(isSentryEnabled()
+          ? [
+            { type: 'separator' },
+            {
+              label: 'Sentry-testfout versturen',
+              click: () => {
+                captureVerificationError('Bingo Sentry verification error');
+              },
+            },
+          ]
+          : []),
       ],
     });
   }
@@ -111,6 +125,12 @@ app.whenReady().then(() => {
   createWindow();
   createMenu();
   scheduleStartupCheck();
+
+  if (process.env.BINGO_SENTRY_TEST === '1' && isSentryEnabled()) {
+    setTimeout(() => {
+      captureVerificationError('Bingo Sentry verification error');
+    }, 2000);
+  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

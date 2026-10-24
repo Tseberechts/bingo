@@ -1,6 +1,6 @@
 # Gebruiksvoorwaarden (EULA) — Bingo
 
-Versie: 2026-10-22
+Versie: 2026-10-24
 
 ## 1. Partijen
 
@@ -48,28 +48,32 @@ Bingo, inclusief ontwerp, code, documentatie en merken, is en blijft eigendom va
 
 Arkastro mag updates, nieuwe versies of gewijzigde voorwaarden aanbieden. Voortgezet gebruik na een update geldt als aanvaarding van de dan geldende voorwaarden, tenzij anders vermeld.
 
-## 7. Geen garantie
+## 7. Diagnostiek
+
+Geïnstalleerde (niet-ontwikkelings) versies van Bingo mogen anonieme technische en gebruiksdiagnostiek versturen (bijv. sessies en foutmeldingen) om de software te verbeteren. Er worden geen persoonlijke profielen opgebouwd.
+
+## 8. Geen garantie
 
 Bingo wordt geleverd “zoals het is” en “zoals beschikbaar”, zonder uitdrukkelijke of stilzwijgende garantie, voor zover wettelijk toegestaan. Arkastro garandeert niet dat Bingo ononderbroken, foutloos of geschikt is voor een specifiek evenement.
 
-## 8. Aansprakelijkheid
+## 9. Aansprakelijkheid
 
 Voor zover wettelijk toegestaan is Arkastro niet aansprakelijk voor indirecte schade, gevolgschade, gederfde winst, dataverlies of schade door onderbreking van een evenement.
 
 Niets in deze EULA beperkt aansprakelijkheid die naar Belgisch recht niet mag worden uitgesloten (waaronder opzet of grove fout).
 
-## 9. Beëindiging
+## 10. Beëindiging
 
 Deze licentie eindigt automatisch als u deze voorwaarden schendt. Bij beëindiging moet u Bingo verwijderen en elk gebruik staken. Bepalingen die naar hun aard voortbestaan (o.a. eigendom, aansprakelijkheid, toepasselijk recht) blijven van kracht.
 
-## 10. Toepasselijk recht en geschillen
+## 11. Toepasselijk recht en geschillen
 
 Op deze EULA is Belgisch recht van toepassing. Geschillen behoren tot de bevoegdheid van de rechtbanken van het arrondissement Antwerpen, onverminderd dwingende consumentenrechten.
 
-## 11. Contact
+## 12. Contact
 
 Vragen over deze voorwaarden: info@arkastro.be
 
-## 12. Slotbepaling
+## 13. Slotbepaling
 
 Indien een bepaling nietig of niet-afdwingbaar is, blijven de overige bepalingen van kracht. Deze EULA vormt de volledige overeenkomst over het gebruik van Bingo, tenzij schriftelijk anders overeengekomen.

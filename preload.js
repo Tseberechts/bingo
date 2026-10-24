@@ -1,5 +1,14 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+// Sandboxed preload cannot require local app modules; init renderer Sentry directly.
+if (process.env.BINGO_SENTRY_ACTIVE === '1') {
+  try {
+    require('@sentry/electron/renderer').init();
+  } catch {
+    // Main-process sessions still cover Release Health if renderer init fails.
+  }
+}
+
 contextBridge.exposeInMainWorld('bingo', {
   // App
   exitApp: () => ipcRenderer.send('exit-app'),

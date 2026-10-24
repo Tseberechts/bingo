@@ -81,6 +81,10 @@ Local `dist` runs do **not** publish (`EB_PUBLISH` defaults to `never`). CI buil
 
 Settings, logos, sponsors, and savegames live under the Electron **user data** folder (Developer menu → *Open Data Folder* in unpackaged builds).
 
+## Diagnostics (Sentry)
+
+Packaged builds send anonymous session and error diagnostics to [Sentry](https://sentry.io) (project **bingo** under Arkastro). [Release Health](https://docs.sentry.io/product/releases/health/) sessions track launches per release (`bingo@<version>` on the **Releases** page); crashes land under **Issues**. A local install UUID supports crash-free user rates without IP or personal data. Unpackaged `npm start` does **not** send data unless you set `BINGO_SENTRY=1` (optional `BINGO_SENTRY_TEST=1` to fire a one-shot verification error).
+
 ## Running an event (projector)
 
 1. Connect the projector/TV and set the OS to **duplicate / mirror** the laptop screen.
