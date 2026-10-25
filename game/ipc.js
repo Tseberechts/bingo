@@ -26,6 +26,7 @@ const {
   quitAndInstall,
   getUpdateStatus,
 } = require('./updater');
+const { ARKASTRO_SPONSOR_ID } = require('./branding');
 const pkg = require('../package.json');
 
 const DISPLAY_MODES = new Set(['hide', 'sponsors', 'logo']);
@@ -272,6 +273,9 @@ const initializeIpc = () => {
   });
 
   ipcMain.handle('delete-sponsor', (_event, sponsorId) => {
+    if (String(sponsorId) === ARKASTRO_SPONSOR_ID) {
+      return { ok: false, error: 'Deze sponsor kan niet verwijderd worden' };
+    }
     const settings = getSettings();
     const id = Number(sponsorId);
     const sponsorToDelete = settings.sponsors.find((s) => s.id === id);

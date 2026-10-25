@@ -166,16 +166,19 @@ const renderSponsors = (sponsors) => {
     name.className = 'name';
     name.textContent = sponsor.name;
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.type = 'button';
-    deleteBtn.className = 'delete-sponsor-btn';
-    deleteBtn.dataset.id = String(sponsor.id);
-    deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
-    deleteBtn.textContent = '×';
-
     sponsorEl.appendChild(img);
     sponsorEl.appendChild(name);
-    sponsorEl.appendChild(deleteBtn);
+
+    if (!sponsor.locked) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'delete-sponsor-btn';
+      deleteBtn.dataset.id = String(sponsor.id);
+      deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
+      deleteBtn.textContent = '×';
+      sponsorEl.appendChild(deleteBtn);
+    }
+
     sponsorList.appendChild(sponsorEl);
   });
 };

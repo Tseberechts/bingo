@@ -140,18 +140,21 @@ const renderSponsors = (sponsors) => {
     name.className = 'name';
     name.textContent = sponsor.name;
 
-    const deleteBtn = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    deleteBtn.setAttribute('class', 'delete-sponsor-btn');
-    deleteBtn.setAttribute('data-id', String(sponsor.id));
-    deleteBtn.setAttribute('fill', 'none');
-    deleteBtn.setAttribute('stroke', 'currentColor');
-    deleteBtn.setAttribute('viewBox', '0 0 24 24');
-    deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
-    deleteBtn.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
-
     sponsorEl.appendChild(img);
     sponsorEl.appendChild(name);
-    sponsorEl.appendChild(deleteBtn);
+
+    if (!sponsor.locked) {
+      const deleteBtn = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      deleteBtn.setAttribute('class', 'delete-sponsor-btn');
+      deleteBtn.setAttribute('data-id', String(sponsor.id));
+      deleteBtn.setAttribute('fill', 'none');
+      deleteBtn.setAttribute('stroke', 'currentColor');
+      deleteBtn.setAttribute('viewBox', '0 0 24 24');
+      deleteBtn.setAttribute('aria-label', 'Verwijder sponsor');
+      deleteBtn.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+      sponsorEl.appendChild(deleteBtn);
+    }
+
     sponsorList.appendChild(sponsorEl);
   });
 };

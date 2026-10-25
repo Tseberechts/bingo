@@ -4,6 +4,7 @@ const { app } = require('electron');
 const { toFileUrl } = require('./paths');
 const { defaultSettings, mergeSettings } = require('./settings-defaults');
 const { getCurrentEulaHash } = require('./eula');
+const { lockedArkastroSponsorForRenderer } = require('./branding');
 
 let settingsPath;
 let settings = {};
@@ -82,17 +83,18 @@ const isEulaAccepted = () => {
   }
 };
 
-/** Settings shaped for the renderer (file URLs for images). */
+/** Settings shaped for the renderer (file URLs for images). Arkastro is always first. */
 const getSettingsForRenderer = () => {
   const current = getSettings();
+  const userSponsors = (current.sponsors || []).map((sponsor) => ({
+    ...sponsor,
+    logo: toFileUrl(sponsor.logo) || sponsor.logo,
+  }));
   return {
     ...current,
     mainLogoPath: toFileUrl(current.mainLogoPath) || current.mainLogoPath,
     mainLogoFileName: current.mainLogoPath ? path.basename(current.mainLogoPath) : null,
-    sponsors: (current.sponsors || []).map((sponsor) => ({
-      ...sponsor,
-      logo: toFileUrl(sponsor.logo) || sponsor.logo,
-    })),
+    sponsors: [lockedArkastroSponsorForRenderer(), ...userSponsors],
   };
 };
 

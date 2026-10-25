@@ -165,7 +165,6 @@ const setupDisplay = (contentContainer, titleContainer, settings, modeKey) => {
     img.alt = 'Logo';
     contentContainer.appendChild(img);
   } else if (displayMode === 'sponsors' && settings.sponsors.length > 0) {
-    if (titleContainer) titleContainer.textContent = 'Onze Sponsors';
     let currentIndex = 0;
     const showNextSponsor = () => {
       const currentSponsorElement = contentContainer.firstElementChild;
@@ -174,8 +173,20 @@ const setupDisplay = (contentContainer, titleContainer, settings, modeKey) => {
         contentContainer.replaceChildren();
 
         const sponsor = settings.sponsors[currentIndex];
+        const hasCaption = Boolean(sponsor.caption);
+        if (titleContainer) {
+          titleContainer.textContent = hasCaption ? '' : 'Onze Sponsors';
+        }
+
         const sponsorWrapper = document.createElement('div');
         sponsorWrapper.className = 'sponsor-display-wrapper';
+
+        if (hasCaption) {
+          const captionEl = document.createElement('p');
+          captionEl.textContent = sponsor.caption;
+          captionEl.className = 'sponsor-caption';
+          sponsorWrapper.appendChild(captionEl);
+        }
 
         const img = document.createElement('img');
         img.src = sponsor.logo;
