@@ -1,6 +1,6 @@
 {
   "name": "bingo",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Desktop bingo caller for live events (Windows, macOS, Linux)",
   "main": "main.js",
   "scripts": {
