@@ -1,6 +1,6 @@
 {
   "name": "bingo",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Desktop bingo caller for live events (Windows, macOS, Linux)",
   "main": "main.js",
   "scripts": {
@@ -56,9 +56,15 @@
       "!**/*.md",
       "README.md",
       "LICENSE",
-      "EULA.md"
+      "EULA.md",
+      "build/icon.png"
     ],
-    "extraResources": [],
+    "extraResources": [
+      {
+        "from": "build/ARKASTRO_LOGO-full-color.svg",
+        "to": "ARKASTRO_LOGO-full-color.svg"
+      }
+    ],
     "win": {
       "target": [
         "nsis",

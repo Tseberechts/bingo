@@ -14,6 +14,16 @@ describe('branding', () => {
     assert.equal(fs.existsSync(getArkastroBrandPath()), true);
   });
 
+  it('packages the Arkastro brand via extraResources', () => {
+    const pkg = require('../package.json');
+    const resources = pkg.build?.extraResources || [];
+    const match = resources.some((entry) => {
+      if (typeof entry === 'string') return entry.includes('ARKASTRO_LOGO-full-color.svg');
+      return entry?.from?.includes('ARKASTRO_LOGO-full-color.svg');
+    });
+    assert.equal(match, true);
+  });
+
   it('returns a locked Arkastro sponsor for the renderer', () => {
     const sponsor = lockedArkastroSponsorForRenderer();
     assert.equal(sponsor.id, ARKASTRO_SPONSOR_ID);
