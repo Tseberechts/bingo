@@ -42,6 +42,7 @@ contextBridge.exposeInMainWorld('bingo', {
   resumeLastGame: () => ipcRenderer.invoke('resume-last-game'),
   listSaveGames: () => ipcRenderer.invoke('list-save-games'),
   deleteSaveGame: (fileName) => ipcRenderer.invoke('delete-save-game', fileName),
+  persistActiveGame: () => ipcRenderer.invoke('persist-active-game'),
   endGame: () => ipcRenderer.send('end-game'),
   callNextNumber: () => ipcRenderer.send('call-next-number'),
   nextRound: () => ipcRenderer.send('next-round'),

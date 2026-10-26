@@ -50,7 +50,9 @@ const initializeUpdater = () => {
 
   autoUpdater.setFeedURL(UPDATE_FEED);
   autoUpdater.autoDownload = false;
-  autoUpdater.autoInstallOnAppQuit = true;
+  // Only install via explicit quitAndInstall (Herstart om te installeren).
+  // Auto-install-on-quit races with Windows shutdown and can leave a broken install.
+  autoUpdater.autoInstallOnAppQuit = false;
 
   autoUpdater.on('checking-for-update', () => {
     setStatus({

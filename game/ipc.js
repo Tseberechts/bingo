@@ -79,8 +79,20 @@ const bufferFromPayload = (payload) => {
   return null;
 };
 
+const persistActiveGame = () => {
+  if (!activeGameFile) return { ok: true, skipped: true };
+  return saveState(activeGameFile);
+};
+
 const initializeIpc = () => {
-  ipcMain.on('exit-app', () => app.quit());
+  app.on('before-quit', () => {
+    persistActiveGame();
+  });
+
+  ipcMain.on('exit-app', () => {
+    persistActiveGame();
+    app.quit();
+  });
 
   ipcMain.handle('toggle-fullscreen', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
@@ -214,7 +226,12 @@ const initializeIpc = () => {
     checkForUpdates({ interactive: Boolean(options?.interactive) })
   ));
   ipcMain.handle('download-update', () => downloadUpdate());
-  ipcMain.handle('install-update', () => quitAndInstall());
+  ipcMain.handle('install-update', () => {
+    persistActiveGame();
+    return quitAndInstall();
+  });
+
+  ipcMain.handle('persist-active-game', () => persistActiveGame());
 
   ipcMain.handle('get-settings', () => getSettingsForRenderer());
   ipcMain.on('save-settings', (_event, partial) => {

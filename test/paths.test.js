@@ -1,9 +1,11 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
+const path = require('path');
 const {
   sanitizeSaveFileName,
   sanitizeImageFileName,
   isAllowedImageBuffer,
+  isPathInside,
   MAX_IMAGE_BYTES,
 } = require('../game/paths');
 
@@ -40,5 +42,19 @@ describe('isAllowedImageBuffer', () => {
   it('rejects empty or oversized buffers', () => {
     assert.equal(isAllowedImageBuffer(Buffer.alloc(0)), false);
     assert.equal(isAllowedImageBuffer(Buffer.alloc(MAX_IMAGE_BYTES + 1)), false);
+  });
+});
+
+describe('isPathInside', () => {
+  it('accepts files under the parent directory', () => {
+    const parent = path.join('C:', 'Users', 'x', 'Bingo', 'savegames');
+    const child = path.join(parent, 'game-1.json');
+    assert.equal(isPathInside(parent, child), true);
+  });
+
+  it('rejects paths that escape the parent', () => {
+    const parent = path.join('C:', 'Users', 'x', 'Bingo', 'savegames');
+    const escape = path.join('C:', 'Users', 'x', 'Bingo', 'other', 'game-1.json');
+    assert.equal(isPathInside(parent, escape), false);
   });
 });

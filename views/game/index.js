@@ -268,7 +268,10 @@ menuReturnToMainButton.addEventListener('click', () => {
   showConfirmDialog(
     'Terug naar het hoofdmenu?',
     'Het spel blijft bewaard. Je kunt het later hervatten.',
-    () => {
+    async () => {
+      if (api.persistActiveGame) {
+        await api.persistActiveGame();
+      }
       window.location.href = '../menu/index.html';
     },
   );

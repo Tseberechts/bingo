@@ -40,6 +40,20 @@ const toFileUrl = (fsPath) => {
   }
 };
 
+/**
+ * True when `child` resolves to a path inside `parent` (or is parent itself).
+ * Prefer this over String#startsWith — on Windows drive-letter casing and
+ * separator differences make prefix checks fail and silently skip saves.
+ */
+const isPathInside = (parent, child) => {
+  if (!parent || !child) return false;
+  const resolvedParent = path.resolve(parent);
+  const resolvedChild = path.resolve(child);
+  const rel = path.relative(resolvedParent, resolvedChild);
+  if (!rel) return true;
+  return !rel.startsWith(`..${path.sep}`) && rel !== '..' && !path.isAbsolute(rel);
+};
+
 module.exports = {
   SAVE_FILE_PATTERN,
   ALLOWED_IMAGE_EXTENSIONS,
@@ -48,4 +62,5 @@ module.exports = {
   sanitizeImageFileName,
   isAllowedImageBuffer,
   toFileUrl,
+  isPathInside,
 };

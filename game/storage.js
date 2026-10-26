@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { app } = require('electron');
 const { gameState, resetState, applyLoadedState } = require('./state');
-const { sanitizeSaveFileName } = require('./paths');
+const { sanitizeSaveFileName, isPathInside } = require('./paths');
 const { dateFromSaveFileName, buildSaveLabelParts } = require('./save-labels');
 
 let savesDir;
@@ -20,7 +20,7 @@ const resolveSavePath = (fileName) => {
   const safeName = sanitizeSaveFileName(fileName);
   if (!safeName || !savesDir) return null;
   const savePath = path.join(savesDir, safeName);
-  if (!savePath.startsWith(savesDir)) return null;
+  if (!isPathInside(savesDir, savePath)) return null;
   return { safeName, savePath };
 };
 
